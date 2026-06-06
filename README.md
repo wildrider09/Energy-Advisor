@@ -21,6 +21,7 @@ EventGenerator → EventStore (H2) → AnomalyEngine → BedrockClient → REST 
   (simulates Snyder)                                                   (polls every 1.5s)
 ```
 
+
 - **EventGenerator** — Simulates a Snyder thermostat with realistic HVAC physics
 - **EventStore** — Persists events in an in-memory H2 database
 - **AnomalyEngine** — Real-time anomaly detection across all 3 pillars
