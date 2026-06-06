@@ -1,0 +1,22 @@
+server:
+  port: 9090
+
+spring:
+  datasource:
+    url: jdbc:h2:mem:energyadvisor
+    driver-class-name: org.h2.Driver
+  h2:
+    console:
+      enabled: true
+      path: /h2
+
+# Amazon Bedrock
+bedrock:
+  enabled: true
+  model-id: us.anthropic.claude-sonnet-4-5-20250929-v1:0
+  region: us-east-1
+
+# Weather (Open-Meteo, no API key needed) - Bangalore
+weather:
+  default-lat: "12.9716"
+  default-lon: "77.5946"

@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Home Energy Advisor</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:-apple-system,sans-serif;background:#f0f7ff;color:#1a3044;line-height:1.7;padding:2rem}
+        .container{max-width:960px;margin:0 auto}
+        h1{font-size:2.4rem;font-weight:800;color:#3b8fd4;text-align:center;margin-bottom:.3rem}
+        .subtitle{text-align:center;color:#6b8a9e;font-size:1rem;margin-bottom:2rem}
+        h2{font-size:1.5rem;font-weight:700;color:#3b8fd4;margin:2.5rem 0 .8rem;padding-bottom:.4rem;border-bottom:2px solid #dce8f0}
+        h3{font-size:1.1rem;font-weight:700;color:#1a3044;margin:1.2rem 0 .4rem}
+        h4{font-size:.95rem;font-weight:700;color:#3b8fd4;margin:1rem 0 .3rem}
+        p{margin-bottom:.8rem;font-size:.95rem}
+        .section{background:#fff;border:1px solid #dce8f0;border-radius:12px;padding:1.5rem;margin-bottom:1.2rem}
+        table{width:100%;border-collapse:collapse;margin:.8rem 0;font-size:.88rem}
+        th{background:#3b8fd4;color:#fff;text-align:left;padding:.5rem .8rem;font-size:.78rem;text-transform:uppercase}
+        td{padding:.5rem .8rem;border-bottom:1px solid #dce8f0}
+        .badge{display:inline-block;padding:.15rem .5rem;border-radius:6px;font-size:.75rem;font-weight:700}
+        .b-blue{background:#e0f0ff;color:#3b8fd4}.b-green{background:#e0ffe8;color:#4db89c}
+        .b-orange{background:#fff0e0;color:#e6a84d}.b-red{background:#ffe0e0;color:#e07070}
+        .b-purple{background:#f0e8ff;color:#7c6cdb}
+        .advisor{background:#f5faff;border-left:3px solid #4db89c;padding:.8rem 1rem;margin:.6rem 0;border-radius:0 8px 8px 0;font-size:.9rem}
+        .advisor::before{content:"🤖 Advisor: ";font-weight:700;color:#4db89c}
+        ul{padding-left:1.3rem;margin-bottom:.8rem}
+        li{margin-bottom:.3rem;font-size:.92rem}
+        .grid{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin:.8rem 0}
+        .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.8rem;margin:.8rem 0}
+        .card{background:#f5faff;border:1px solid #dce8f0;border-radius:10px;padding:1rem}
+        .card h3{margin-top:0;color:#3b8fd4;font-size:1rem}
+        .card p{font-size:.88rem;color:#6b8a9e}
+        .pillar{border-radius:12px;padding:1.5rem;margin-bottom:1rem}
+        .pillar-health{background:linear-gradient(135deg,#fff8e8,#fff0d0);border:1px solid #e6d4a0}
+        .pillar-bill{background:linear-gradient(135deg,#e8f4ff,#d4e8ff);border:1px solid #a0c8e6}
+        .pillar-dr{background:linear-gradient(135deg,#e8fff4,#d0f0e0);border:1px solid #a0d4b8}
+        .pillar h3{font-size:1.2rem;margin-bottom:.6rem}
+        .detector{background:#fff;border:1px solid #dce8f0;border-radius:8px;padding:.8rem;margin:.5rem 0}
+        .detector strong{color:#3b8fd4}
+        .lifecycle{display:flex;gap:.3rem;flex-wrap:wrap;margin:.8rem 0}
+        .lifecycle-step{flex:1;min-width:140px;padding:.6rem;border-radius:8px;text-align:center;font-size:.82rem}
+        .ls-scheduled{background:#fff8e0;border:1px solid #e6d4a0}
+        .ls-precool{background:#e0f0ff;border:1px solid #a0c8e6}
+        .ls-active{background:#e0ffe8;border:1px solid #a0d4b8}
+        .ls-recovery{background:#fff0e0;border:1px solid #e6c8a0}
+        .ls-none{background:#f0f0f0;border:1px solid #d0d0d0}
+        .flow{display:flex;align-items:center;gap:.3rem;flex-wrap:wrap;margin:1rem 0;justify-content:center}
+        .flow-box{background:#e8f4ff;border:1px solid #a0c8e6;border-radius:8px;padding:.5rem .8rem;font-size:.82rem;font-weight:600;text-align:center}
+        .flow-arrow{color:#3b8fd4;font-weight:700;font-size:1.2rem}
+        .note{background:#f5faff;border-left:3px solid #3b8fd4;padding:.6rem 1rem;margin:.6rem 0;border-radius:0 8px 8px 0;font-size:.88rem;color:#6b8a9e}
+        .questions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.8rem;margin:.8rem 0}
+        .q-group h4{margin-bottom:.4rem}
+        .q-group p{font-size:.82rem;color:#6b8a9e;margin-bottom:.3rem}
+        .savings-card{background:#e0ffe8;border:1px solid #a0d4b8;border-radius:10px;padding:1rem;text-align:center}
+        .savings-card .num{font-size:1.4rem;font-weight:800;color:#4db89c}
+        .footer{text-align:center;color:#6b8a9e;font-size:.8rem;margin-top:2rem;padding-top:1rem;border-top:1px solid #dce8f0}
+    </style>
+</head>
+<body>
+<div class="container">
+
+<h1>⚡ Smart Home Energy Advisor</h1>
+<p class="subtitle">AI-Powered Energy Intelligence for Amazon Smart Thermostat (Snyder)</p>
+
+<!-- PROJECT OVERVIEW -->
+<div class="section">
+    <h2>Project Overview</h2>
+    <p>A complete end-to-end smart home energy management system built for the Amazon Smart Thermostat.</p>
+    <div class="grid3">
+        <div class="card"><h3>🌡️ HVAC Simulation</h3><p>Physics-based thermostat simulator generates realistic events every 2 seconds. Models temperature drift, compressor cycles, aux heater activation, fan operation, and DR lifecycle. Uses real Bangalore weather via Open-Meteo API.</p></div>
+        <div class="card"><h3>🔍 Anomaly Detection</h3><p>Real-time engine evaluates device state on every tick. Detects 5 categories: aux heater overuse, filter degradation, runtime spikes, DR preparation needs, and connectivity loss. Each anomaly includes description and recommendation.</p></div>
+        <div class="card"><h3>🤖 AI-Powered Chat</h3><p>Claude on Bedrock receives full device context — state, events, anomalies, weather — and responds in homeowner-friendly language with dollar estimates, time projections, and specific actions.</p></div>
+        <div class="card"><h3>📊 Live Dashboard</h3><p>Real-time web dashboard: indoor/outdoor temp, HVAC status, runtime bars, energy costs, DR state. Polls every 1.5s for state, every 3s for proactive alerts.</p></div>
+        <div class="card"><h3>⚡ Demand Response</h3><p>Complete 5-stage lifecycle: SCHEDULED → PRE_COOLING → ACTIVE → RECOVERY → NONE. 3-4 events per week. Auto-adjusts setpoints to reduce grid load while maintaining comfort.</p></div>
+        <div class="card"><h3>🎛️ AI Optimization</h3><p>Every 60s, Bedrock analyzes state + weather + forecast + trends + preferences → returns JSON {mode, setpoint, reason}. Users can override; AI learns from manual adjustments.</p></div>
+    </div>
+</div>
+
+<!-- 3 INTELLIGENCE PILLARS -->
+<div class="section">
+    <h2>The 3 Intelligence Pillars</h2>
+    <p>Every feature in the app maps to one of three core intelligence pillars.</p>
+
+    <!-- PILLAR 1: HVAC HEALTH -->
+    <div class="pillar pillar-health">
+        <h3>🔧 Pillar 1: HVAC Health Intelligence</h3>
+        <p>Continuously monitors HVAC system health by analyzing component behavior, runtime patterns, and maintenance indicators. Detects problems before they become expensive failures.</p>
+
+        <h4>Anomaly Detectors</h4>
+        <div class="detector">
+            <strong>Auxiliary Heater Overuse</strong> — Triggers when aux heater runs 3+ times/day while outdoor temp is above 45°F. At those temperatures, the primary heater should handle the load alone. Often indicates clogged filter, refrigerant leak, or failing compressor. Estimated waste: $15-20/month.
+        </div>
+        <div class="detector">
+            <strong>Filter Degradation</strong> — Tracks total HVAC runtime since last filter change. When runtime exceeds 200 hours AND aux heater usage trends up, it alerts the homeowner. Dirty filter restricts airflow, forcing backup heater use at 2-3x the cost.
+        </div>
+        <div class="detector">
+            <strong>Connectivity Loss</strong> — Detects when thermostat goes offline. Reports last known state (mode, temps) so homeowner knows conditions. Severity: CRITICAL — offline thermostat can't respond to temperature changes or DR events.
+        </div>
+
+        <div class="note">💡 <strong>Real-World Application:</strong> On a real Snyder thermostat, these detectors would analyze actual telemetry events. The physics would be real — not simulated — but the anomaly detection logic and AI integration would work identically.</div>
+    </div>
+
+    <!-- PILLAR 2: ENERGY BILL -->
+    <div class="pillar pillar-bill">
+        <h3>💰 Pillar 2: Energy Bill Explainability</h3>
+        <p>Correlates HVAC runtime with real weather data to explain why energy costs are what they are. Instead of just showing a number, the system tells you <em>why</em> your bill is high and what's driving the cost.</p>
+
+        <h4>Cost Calculation Model</h4>
+        <table>
+            <tr><th>Component</th><th>Draw</th><th>Cost/Hour</th><th>Example</th></tr>
+            <tr><td>❄️ Cooler</td><td>3.5 kW</td><td>$0.56</td><td>5 hours = $2.80/day → $84/month</td></tr>
+            <tr><td>🔥 Heater</td><td>10.0 kW</td><td>$1.60</td><td>Significantly more expensive than cooling</td></tr>
+            <tr><td>⚡ Aux Heater</td><td>15.0 kW</td><td>$2.40</td><td>Most expensive — 4x cooling cost per hour</td></tr>
+            <tr><td>📅 Monthly</td><td colspan="3">Today's total × 30 days</td></tr>
+        </table>
+
+        <div class="detector">
+            <strong>Runtime Spike Detector</strong> — Triggers when cooler runs 6+ hours/day while outdoor temp is below 90°F. At moderate temperatures, this suggests the system is working harder than it should — poor insulation, low setpoint, or equipment issues.
+        </div>
+
+        <div class="note">📊 <strong>Weather Correlation:</strong> When a user asks "Why is my bill high?", the AI receives full weather context — temperature, humidity, wind, feels-like, and 6-hour forecast. It explains that a 95°F day with high humidity forces the AC to run longer, or that a cold snap triggered expensive auxiliary heating.</div>
+    </div>
+
+    <!-- PILLAR 3: DR -->
+    <div class="pillar pillar-dr">
+        <h3>🌿 Pillar 3: Demand Response & Clean Energy Advisor</h3>
+        <p>Prepares for demand response events, explains PRISM impact, and suggests pre-cooling/heating strategies to maintain comfort while reducing grid load during peak demand.</p>
+
+        <h4>DR Event Lifecycle</h4>
+        <div class="lifecycle">
+            <div class="lifecycle-step ls-scheduled"><strong>📋 SCHEDULED</strong><br>1:30 PM<br>Event announced, planning begins</div>
+            <div class="lifecycle-step ls-precool"><strong>❄️ PRE_COOLING</strong><br>1:45 PM<br>Setpoint -2°F, builds thermal buffer</div>
+            <div class="lifecycle-step ls-active"><strong>⚡ ACTIVE</strong><br>3:00 PM<br>Setpoint +4°F, reduces grid load</div>
+            <div class="lifecycle-step ls-recovery"><strong>🔄 RECOVERY</strong><br>5:00 PM<br>Setpoint -2°F, gradual restore</div>
+            <div class="lifecycle-step ls-none"><strong>✅ NONE</strong><br>5:30 PM<br>Normal operation resumes</div>
+        </div>
+
+        <p><strong>Frequency:</strong> 3-4 events per simulated week (Mon, Wed, Thu + occasional Fri) during afternoon peak hours (2-5 PM), matching real-world DR program patterns.</p>
+
+        <div class="note">⚡ <strong>PRISM Integration:</strong> In production, the DR advisor would integrate with PRISM (Proactive Resource and Intelligent Scheduling Manager) to align thermostat behavior with grid carbon intensity — running AC harder when the grid is clean (solar/wind) and reducing load when it's dirty (coal/gas).</div>
+    </div>
+</div>
+
+<!-- SAVINGS MODEL -->
+<div class="section">
+    <h2>Savings Model</h2>
+    <div class="grid3">
+        <div class="savings-card">
+            <div class="num">15%</div>
+            <strong>🤖 AI Optimization</strong>
+            <p style="font-size:.82rem;color:#6b8a9e">Smart setpoint adjustments based on weather, time of day, and user preferences reduce unnecessary runtime.</p>
+        </div>
+        <div class="savings-card">
+            <div class="num">10%</div>
+            <strong>🔧 Filter Maintenance</strong>
+            <p style="font-size:.82rem;color:#6b8a9e">Clean filter improves airflow efficiency, reducing compressor load and eliminating unnecessary aux heater activation.</p>
+        </div>
+        <div class="savings-card">
+            <div class="num">~$12/mo</div>
+            <strong>⚡ DR Participation</strong>
+            <p style="font-size:.82rem;color:#6b8a9e">3.5 events/week × 2 hours × $0.40/hour = ~$12/month in avoided peak pricing.</p>
+        </div>
+    </div>
+</div>
+
+<!-- SAMPLE QUESTIONS -->
+<div class="section">
+    <h2>Sample Questions to Ask</h2>
+    <div class="questions">
+        <div class="q-group">
+            <h4>💰 Billing</h4>
+            <p>"Why is my energy bill high?"</p>
+            <p>"How much is my HVAC costing me today?"</p>
+            <p>"What temperature should I set for best savings?"</p>
+            <p>"Compare my usage today vs yesterday"</p>
+        </div>
+        <div class="q-group">
+            <h4>🔧 Health</h4>
+            <p>"Is my HVAC system healthy?"</p>
+            <p>"Why does my aux heater keep running?"</p>
+            <p>"Do I need to change my air filter?"</p>
+            <p>"Is my system running efficiently?"</p>
+        </div>
+        <div class="q-group">
+            <h4>⚡ Demand Response</h4>
+            <p>"Am I ready for the demand response event?"</p>
+            <p>"When is the next demand response event?"</p>
+            <p>"Should I pre-cool before the DR event?"</p>
+            <p>"How much did I save during the last DR event?"</p>
+        </div>
+    </div>
+</div>
+
+<!-- AI PATTERN LEARNING -->
+<div class="section">
+    <h2>How AI Learns Your Preferences</h2>
+    <div class="flow">
+        <div class="flow-box">👤 User Override<br><small>72°F at 94°F outdoor</small></div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-box">📝 Pattern Stored<br><small>temp, mode, weather, time</small></div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-box">🤖 Bedrock Prompt<br><small>preferences injected</small></div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-box">✅ Smarter Decisions<br><small>"You prefer 72°F when hot"</small></div>
+    </div>
+    <p>Last 20 overrides are tracked. Each records temperature, mode, outdoor conditions, and time of day. The AI adapts automatically — no training required.</p>
+</div>
+
+<!-- WEATHER INTEGRATION -->
+<div class="section">
+    <h2>Live Weather Integration</h2>
+    <p>Open-Meteo API provides real Bangalore weather every 10 minutes — no API key needed.</p>
+    <div class="grid3">
+        <div class="card"><h3>🌡️ Simulation</h3><p>Real outdoor temp drives HVAC physics — indoor temp drifts toward actual conditions.</p></div>
+        <div class="card"><h3>🤖 AI Prompts</h3><p>Bedrock sees current temp, humidity, wind, feels-like, and 6-hour forecast in every response.</p></div>
+        <div class="card"><h3>📈 Trend Detection</h3><p>Rising/falling/stable trend triggers proactive tips and pre-emptive optimization.</p></div>
+    </div>
+</div>
+
+<!-- BEFORE VS AFTER -->
+<div class="section">
+    <h2>Before vs After</h2>
+    <div class="grid">
+        <div class="card" style="border-left:3px solid #e07070">
+            <h3 style="color:#e07070">❌ Today</h3>
+            <p>"Cooling 74°F" — no context</p>
+            <p>Monthly bill — no breakdown</p>
+            <p>Filter reminder — no explanation why</p>
+            <p>DR event — silently adjusts setpoint</p>
+        </div>
+        <div class="card" style="border-left:3px solid #4db89c">
+            <h3 style="color:#4db89c">✅ With Advisor</h3>
+            <p>"Your AC cost $1.40 today in 94°F heat"</p>
+            <p>"Aux heater costing you $10-15 extra/month"</p>
+            <p>"Filter at 200h — replace to save 5-15%"</p>
+            <p>"Pre-cooling now, DR at 3 PM, you won't notice"</p>
+        </div>
+    </div>
+</div>
+
+<!-- SCOPE -->
+<div class="section">
+    <h2>Scope</h2>
+    <div class="grid">
+        <div>
+            <h3>✅ What's Included</h3>
+            <ul>
+                <li>Full HVAC simulation with real Bangalore weather</li>
+                <li>5 anomaly detectors across 3 pillars</li>
+                <li>4 Bedrock AI capabilities (chat, alerts, optimize, patterns)</li>
+                <li>5-stage DR lifecycle, 3-4 events/week</li>
+                <li>Real-time cost estimation + savings model</li>
+                <li>Manual override with pattern learning</li>
+                <li>Standalone chatbot for general questions</li>
+                <li>Dynamic tile colors + chat request lock</li>
+            </ul>
+        </div>
+        <div>
+            <h3>🔄 What's Mocked</h3>
+            <table>
+                <tr><td>ASEEventProcessor SNS</td><td>→ Java simulator</td></tr>
+                <tr><td>CHRS metadata</td><td>→ Pre-baked device info</td></tr>
+                <tr><td>AlexaAddressService</td><td>→ Open-Meteo API</td></tr>
+                <tr><td>Alexa+ voice</td><td>→ Web chat UI</td></tr>
+                <tr><td>Utility billing</td><td>→ Runtime × rate</td></tr>
+            </table>
+            <p style="font-size:.85rem"><strong>Production path:</strong> Single new SNS subscriber on SHEP topic. Zero changes to existing services.</p>
+        </div>
+    </div>
+</div>
+
+<!-- FUTURE -->
+<div class="section">
+    <h2>Future Improvements</h2>
+    <div class="grid">
+        <div class="card"><h3>📱 Alexa Skill + Echo Show</h3><p>Same AI → Lambda + Proactive Events API + APL dashboard. "Alexa, show my energy dashboard."</p></div>
+        <div class="card"><h3>🔮 Predictive Forecasting</h3><p>"Tomorrow costs $4.50 — pre-cool before 2 PM peak to save $1.20."</p></div>
+        <div class="card"><h3>🛒 Smart Filter Reorder</h3><p>Health detection triggers auto-order via Dash with full context.</p></div>
+        <div class="card"><h3>🏠 Multi-Device</h3><p>Nest, Ecobee, Honeywell + whole-home analysis. Plug-and-play architecture.</p></div>
+    </div>
+</div>
+
+<div class="footer">
+    <p>⚡ Smart Home Energy Advisor — BLR Smart Home Hackathon 2026</p>
+    <p>App, Demo & PPT built with AI</p>
+</div>
+
+</div>
+</body>
+</html>

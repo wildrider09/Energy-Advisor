@@ -1,0 +1,3432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Home Energy Advisor — Complete Project Documentation</title>
+    <style>
+        /* ============================================================
+           GLOBAL STYLES
+           ============================================================ */
+        :root {
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --surface2: #f1f5f9;
+            --border: #e2e8f0;
+            --text: #1e293b;
+            --muted: #64748b;
+            --accent: #3b82f6;
+            --accent-light: #dbeafe;
+            --green: #10b981;
+            --green-light: #d1fae5;
+            --orange: #f59e0b;
+            --orange-light: #fef3c7;
+            --red: #ef4444;
+            --red-light: #fee2e2;
+            --purple: #8b5cf6;
+            --purple-light: #ede9fe;
+            --cyan: #06b6d4;
+            --cyan-light: #cffafe;
+            --code-bg: #1e293b;
+            --code-text: #e2e8f0;
+            --radius: 12px;
+            --shadow: 0 1px 3px rgba(0,0,0,.06);
+            --shadow-md: 0 4px 12px rgba(0,0,0,.08);
+            --shadow-lg: 0 8px 30px rgba(0,0,0,.12);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            font-size: 16px;
+        }
+
+        /* ============================================================
+           NAVIGATION
+           ============================================================ */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(255,255,255,.95);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            padding: 0 2rem;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: .75rem;
+            font-weight: 800;
+            font-size: 1.1rem;
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .nav-brand span {
+            font-size: 1.5rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--muted);
+            text-decoration: none;
+            font-size: .85rem;
+            font-weight: 500;
+            transition: color .2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent);
+        }
+
+        /* ============================================================
+           HERO SECTION
+           ============================================================ */
+        .hero {
+            margin-top: 64px;
+            padding: 6rem 2rem 4rem;
+            text-align: center;
+            background: linear-gradient(135deg, #dbeafe 0%, #ede9fe 50%, #fce7f3 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 30% 50%, rgba(59,130,246,.08) 0%, transparent 50%),
+                        radial-gradient(circle at 70% 50%, rgba(139,92,246,.08) 0%, transparent 50%);
+            animation: heroFloat 20s ease-in-out infinite;
+        }
+
+        @keyframes heroFloat {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(-2%, 2%); }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            padding: .4rem 1rem;
+            background: rgba(59,130,246,.1);
+            color: var(--accent);
+            border-radius: 20px;
+            font-size: .8rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(59,130,246,.2);
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #1e40af, #7c3aed, #db2777);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--muted);
+            max-width: 700px;
+            margin: 0 auto 2rem;
+            line-height: 1.8;
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin-top: 2rem;
+        }
+
+        .hero-stat {
+            text-align: center;
+        }
+
+        .hero-stat-val {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--accent);
+        }
+
+        .hero-stat-label {
+            font-size: .8rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: .05em;
+        }
+
+        /* ============================================================
+           CONTAINER & SECTIONS
+           ============================================================ */
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        section {
+            padding: 5rem 0;
+        }
+
+        section:nth-child(even) {
+            background: var(--surface);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-header h2 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: .75rem;
+        }
+
+        .section-header p {
+            font-size: 1.1rem;
+            color: var(--muted);
+            max-width: 650px;
+            margin: 0 auto;
+        }
+
+        .section-number {
+            display: inline-block;
+            width: 36px;
+            height: 36px;
+            line-height: 36px;
+            text-align: center;
+            background: var(--accent);
+            color: #fff;
+            border-radius: 50%;
+            font-size: .85rem;
+            font-weight: 700;
+            margin-bottom: .75rem;
+        }
+
+        /* ============================================================
+           CARDS
+           ============================================================ */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.75rem;
+            box-shadow: var(--shadow);
+            transition: transform .2s, box-shadow .2s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .card-icon {
+            font-size: 2rem;
+            margin-bottom: .75rem;
+        }
+
+        .card h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: .5rem;
+        }
+
+        .card p {
+            color: var(--muted);
+            font-size: .95rem;
+            line-height: 1.7;
+        }
+
+        /* ============================================================
+           PILLAR CARDS
+           ============================================================ */
+        .pillar-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .pillar-card.health {
+            border-left: 4px solid var(--green);
+        }
+
+        .pillar-card.billing {
+            border-left: 4px solid var(--orange);
+        }
+
+        .pillar-card.dr {
+            border-left: 4px solid var(--purple);
+        }
+
+        .pillar-number {
+            display: inline-block;
+            padding: .2rem .6rem;
+            border-radius: 6px;
+            font-size: .75rem;
+            font-weight: 700;
+            margin-bottom: .75rem;
+        }
+
+        .pillar-card.health .pillar-number {
+            background: var(--green-light);
+            color: var(--green);
+        }
+
+        .pillar-card.billing .pillar-number {
+            background: var(--orange-light);
+            color: var(--orange);
+        }
+
+        .pillar-card.dr .pillar-number {
+            background: var(--purple-light);
+            color: var(--purple);
+        }
+
+        .pillar-card h3 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: .75rem;
+        }
+
+        .pillar-card p {
+            color: var(--muted);
+            line-height: 1.8;
+            margin-bottom: 1rem;
+        }
+
+        .pillar-features {
+            list-style: none;
+            padding: 0;
+        }
+
+        .pillar-features li {
+            padding: .5rem 0;
+            border-bottom: 1px solid var(--border);
+            font-size: .95rem;
+            display: flex;
+            align-items: flex-start;
+            gap: .5rem;
+        }
+
+        .pillar-features li:last-child {
+            border-bottom: none;
+        }
+
+        .pillar-features li::before {
+            content: '✓';
+            color: var(--green);
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        /* ============================================================
+           CODE BLOCKS
+           ============================================================ */
+        .code-block {
+            background: var(--code-bg);
+            color: var(--code-text);
+            border-radius: var(--radius);
+            overflow: hidden;
+            margin: 1.5rem 0;
+            box-shadow: var(--shadow-md);
+        }
+
+        .code-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: .75rem 1.25rem;
+            background: rgba(255,255,255,.05);
+            border-bottom: 1px solid rgba(255,255,255,.1);
+        }
+
+        .code-filename {
+            font-size: .8rem;
+            font-weight: 600;
+            color: #94a3b8;
+        }
+
+        .code-lang {
+            font-size: .7rem;
+            padding: .15rem .5rem;
+            background: rgba(59,130,246,.2);
+            color: #93c5fd;
+            border-radius: 4px;
+        }
+
+        .code-body {
+            padding: 1.25rem;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+            font-size: .82rem;
+            line-height: 1.7;
+            tab-size: 4;
+        }
+
+        .code-body pre {
+            margin: 0;
+            white-space: pre;
+        }
+
+        /* Syntax highlighting classes */
+        .kw { color: #c084fc; }          /* keywords */
+        .str { color: #86efac; }         /* strings */
+        .num { color: #fbbf24; }         /* numbers */
+        .cmt { color: #64748b; }         /* comments */
+        .ann { color: #fbbf24; }         /* annotations */
+        .type { color: #67e8f9; }        /* types */
+        .fn { color: #93c5fd; }          /* functions */
+        .op { color: #f472b6; }          /* operators */
+        .tag { color: #f472b6; }         /* HTML tags */
+        .attr { color: #67e8f9; }        /* HTML attributes */
+        .val { color: #86efac; }         /* attribute values */
+        .prop { color: #93c5fd; }        /* CSS properties */
+        .sel { color: #c084fc; }         /* CSS selectors */
+
+        /* ============================================================
+           ARCHITECTURE DIAGRAM
+           ============================================================ */
+        .arch-diagram {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 2rem;
+            text-align: center;
+            margin: 2rem 0;
+            box-shadow: var(--shadow);
+        }
+
+        .arch-flow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: .5rem;
+            flex-wrap: wrap;
+            margin: 1.5rem 0;
+        }
+
+        .arch-box {
+            padding: .75rem 1.25rem;
+            border-radius: 10px;
+            font-size: .85rem;
+            font-weight: 600;
+            border: 2px solid;
+            min-width: 140px;
+            text-align: center;
+        }
+
+        .arch-box.simulator { background: #dbeafe; border-color: #3b82f6; color: #1e40af; }
+        .arch-box.store { background: #d1fae5; border-color: #10b981; color: #065f46; }
+        .arch-box.engine { background: #fef3c7; border-color: #f59e0b; color: #92400e; }
+        .arch-box.bedrock { background: #ede9fe; border-color: #8b5cf6; color: #5b21b6; }
+        .arch-box.api { background: #fce7f3; border-color: #ec4899; color: #9d174d; }
+        .arch-box.ui { background: #cffafe; border-color: #06b6d4; color: #155e75; }
+
+        .arch-arrow {
+            font-size: 1.5rem;
+            color: var(--muted);
+        }
+
+        /* ============================================================
+           TABLES
+           ============================================================ */
+        .table-wrapper {
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: .9rem;
+        }
+
+        thead {
+            background: var(--surface2);
+        }
+
+        th {
+            padding: .85rem 1.25rem;
+            text-align: left;
+            font-weight: 700;
+            font-size: .8rem;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            color: var(--muted);
+            border-bottom: 2px solid var(--border);
+        }
+
+        td {
+            padding: .75rem 1.25rem;
+            border-bottom: 1px solid var(--border);
+            vertical-align: top;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover {
+            background: var(--surface2);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: .15rem .5rem;
+            border-radius: 4px;
+            font-size: .75rem;
+            font-weight: 600;
+        }
+
+        .badge-blue { background: var(--accent-light); color: var(--accent); }
+        .badge-green { background: var(--green-light); color: var(--green); }
+        .badge-orange { background: var(--orange-light); color: var(--orange); }
+        .badge-red { background: var(--red-light); color: var(--red); }
+        .badge-purple { background: var(--purple-light); color: var(--purple); }
+
+        /* ============================================================
+           INFO BOXES
+           ============================================================ */
+        .info-box {
+            padding: 1.25rem 1.5rem;
+            border-radius: var(--radius);
+            margin: 1.5rem 0;
+            border-left: 4px solid;
+        }
+
+        .info-box.tip {
+            background: #f0fdf4;
+            border-color: var(--green);
+        }
+
+        .info-box.warning {
+            background: #fffbeb;
+            border-color: var(--orange);
+        }
+
+        .info-box.note {
+            background: #eff6ff;
+            border-color: var(--accent);
+        }
+
+        .info-box.danger {
+            background: #fef2f2;
+            border-color: var(--red);
+        }
+
+        .info-box-title {
+            font-weight: 700;
+            font-size: .9rem;
+            margin-bottom: .25rem;
+        }
+
+        .info-box p {
+            font-size: .9rem;
+            color: var(--muted);
+        }
+
+        /* ============================================================
+           TIMELINE
+           ============================================================ */
+        .timeline {
+            position: relative;
+            padding-left: 2rem;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--border);
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-bottom: 2rem;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -2rem;
+            top: .4rem;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--accent);
+            border: 2px solid var(--surface);
+            transform: translateX(-5px);
+        }
+
+        .timeline-item h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: .25rem;
+        }
+
+        .timeline-item p {
+            color: var(--muted);
+            font-size: .9rem;
+        }
+
+        /* ============================================================
+           FLOW DIAGRAMS
+           ============================================================ */
+        .flow-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 1.25rem;
+            padding: 1.25rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            margin-bottom: 1rem;
+            box-shadow: var(--shadow);
+        }
+
+        .flow-num {
+            width: 36px;
+            height: 36px;
+            line-height: 36px;
+            text-align: center;
+            background: var(--accent);
+            color: #fff;
+            border-radius: 50%;
+            font-weight: 700;
+            font-size: .85rem;
+            flex-shrink: 0;
+        }
+
+        .flow-content h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: .25rem;
+        }
+
+        .flow-content p {
+            color: var(--muted);
+            font-size: .9rem;
+        }
+
+        /* ============================================================
+           FOOTER
+           ============================================================ */
+        .footer {
+            padding: 3rem 2rem;
+            background: var(--code-bg);
+            color: #94a3b8;
+            text-align: center;
+        }
+
+        .footer h3 {
+            color: #e2e8f0;
+            font-size: 1.2rem;
+            margin-bottom: .5rem;
+        }
+
+        .footer p {
+            font-size: .85rem;
+        }
+
+        /* ============================================================
+           RESPONSIVE
+           ============================================================ */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.2rem; }
+            .hero-stats { flex-direction: column; gap: 1rem; }
+            .nav-links { display: none; }
+            .card-grid { grid-template-columns: 1fr; }
+            .arch-flow { flex-direction: column; }
+            .container { padding: 0 1rem; }
+        }
+
+        /* ============================================================
+           UTILITY CLASSES
+           ============================================================ */
+        .mt-1 { margin-top: .5rem; }
+        .mt-2 { margin-top: 1rem; }
+        .mt-3 { margin-top: 1.5rem; }
+        .mt-4 { margin-top: 2rem; }
+        .mb-1 { margin-bottom: .5rem; }
+        .mb-2 { margin-bottom: 1rem; }
+        .mb-3 { margin-bottom: 1.5rem; }
+        .mb-4 { margin-bottom: 2rem; }
+        .text-center { text-align: center; }
+        .text-muted { color: var(--muted); }
+        .text-sm { font-size: .85rem; }
+        .font-bold { font-weight: 700; }
+        .inline-code {
+            background: var(--surface2);
+            padding: .15rem .4rem;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: .85em;
+            color: var(--accent);
+        }
+    </style>
+</head>
+<body>
+
+<!-- ================================================================
+     NAVIGATION
+     ================================================================ -->
+<nav class="nav">
+    <a href="#top" class="nav-brand">
+        <span>⚡</span> Smart Home Energy Advisor
+    </a>
+    <ul class="nav-links">
+        <li><a href="#overview">Overview</a></li>
+        <li><a href="#pillars">3 Pillars</a></li>
+        <li><a href="#architecture">Architecture</a></li>
+        <li><a href="#tech-stack">Tech Stack</a></li>
+        <li><a href="#source-code">Source Code</a></li>
+        <li><a href="#api-reference">API</a></li>
+        <li><a href="#frontend">Frontend</a></li>
+        <li><a href="#getting-started">Setup</a></li>
+    </ul>
+</nav>
+
+<!-- ================================================================
+     HERO
+     ================================================================ -->
+<div class="hero" id="top">
+    <div class="hero-content">
+        <div class="hero-badge">🏠 Amazon Smart Thermostat (Snyder)</div>
+        <h1>Smart Home Energy Advisor</h1>
+        <p>
+            An AI-powered conversational energy advisor that simulates a real thermostat,
+            detects anomalies in real-time, and lets you chat with Claude on Amazon Bedrock
+            to understand and optimize your home energy usage.
+        </p>
+        <div class="hero-stats">
+            <div class="hero-stat">
+                <div class="hero-stat-val">3</div>
+                <div class="hero-stat-label">Intelligence Pillars</div>
+            </div>
+            <div class="hero-stat">
+                <div class="hero-stat-val">12</div>
+                <div class="hero-stat-label">REST API Endpoints</div>
+            </div>
+            <div class="hero-stat">
+                <div class="hero-stat-val">5</div>
+                <div class="hero-stat-label">Anomaly Detectors</div>
+            </div>
+            <div class="hero-stat">
+                <div class="hero-stat-val">Real-time</div>
+                <div class="hero-stat-label">Weather Integration</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ================================================================
+     SECTION 1: PROJECT OVERVIEW
+     ================================================================ -->
+<section id="overview">
+    <div class="container">
+        <div class="section-header">
+            <div class="section-number">1</div>
+            <h2>Project Overview</h2>
+            <p>A complete end-to-end smart home energy management system built for the Amazon Smart Thermostat</p>
+        </div>
+
+        <div class="card-grid">
+            <div class="card">
+                <div class="card-icon">🌡️</div>
+                <h3>HVAC Simulation</h3>
+                <p>
+                    A physics-based thermostat simulator generates realistic HVAC events every 2 seconds.
+                    It models indoor/outdoor temperature drift, compressor cycles, auxiliary heater activation,
+                    fan operation, and demand response lifecycle events. The simulator uses real weather data
+                    from Bangalore via the Open-Meteo API to drive outdoor temperature readings.
+                </p>
+            </div>
+            <div class="card">
+                <div class="card-icon">🔍</div>
+                <h3>Anomaly Detection</h3>
+                <p>
+                    A real-time anomaly engine evaluates device state on every simulation tick. It detects
+                    5 categories of anomalies: auxiliary heater overuse, filter degradation, runtime spikes,
+                    demand response preparation needs, and connectivity loss. Each anomaly includes a
+                    human-readable description and actionable recommendation.
+                </p>
+            </div>
+            <div class="card">
+                <div class="card-icon">🤖</div>
+                <h3>AI-Powered Chat</h3>
+                <p>
+                    Claude on Amazon Bedrock powers the conversational interface. The AI receives full device
+                    context — current state, recent events, active anomalies, weather data — and responds in
+                    simple, homeowner-friendly language. It provides dollar estimates, time projections, and
+                    specific actionable recommendations.
+                </p>
+            </div>
+            <div class="card">
+                <div class="card-icon">📊</div>
+                <h3>Live Dashboard</h3>
+                <p>
+                    A real-time web dashboard shows indoor/outdoor temperature, HVAC component status,
+                    runtime bars, energy costs, demand response state, and Energy Star score. It polls
+                    the backend every 1.5 seconds for state updates and every 3 seconds for proactive
+                    alerts from the anomaly engine.
+                </p>
+            </div>
+            <div class="card">
+                <div class="card-icon">⚡</div>
+                <h3>Demand Response</h3>
+                <p>
+                    The simulator models a complete demand response lifecycle: SCHEDULED → PRE_COOLING →
+                    ACTIVE → RECOVERY → NONE. Events occur 3-4 times per simulated week. During DR events,
+                    the system automatically adjusts setpoints to reduce grid load while maintaining comfort.
+                    The AI explains what's happening and why.
+                </p>
+            </div>
+            <div class="card">
+                <div class="card-icon">🎛️</div>
+                <h3>AI Optimization</h3>
+                <p>
+                    Every 60 seconds, Bedrock analyzes the current state, weather forecast, temperature trends,
+                    and user preferences to decide if the thermostat settings should change. It responds with
+                    JSON containing mode, setpoint, and reason. Users can override the AI and it learns from
+                    their manual adjustments.
+                </p>
+            </div>
+        </div>
+
+        <!-- What makes this project unique -->
+        <div class="mt-4">
+            <h3 class="mb-2">What Makes This Project Unique</h3>
+            <p class="text-muted mb-3">
+                Unlike typical demo apps, this project simulates a complete IoT device lifecycle with realistic
+                physics, real weather data, and production-grade AI integration. Here's what sets it apart:
+            </p>
+
+            <div class="flow-step">
+                <div class="flow-num">1</div>
+                <div class="flow-content">
+                    <h4>Real Physics, Not Random Data</h4>
+                    <p>
+                        The HVAC simulator models actual thermal dynamics — indoor temperature drifts toward
+                        outdoor temperature at a configurable rate, cooling and heating have different BTU
+                        capacities, and the auxiliary heater kicks in when the primary heater can't keep up.
+                        This creates realistic patterns that the anomaly engine can detect.
+                    </p>
+                </div>
+            </div>
+
+            <div class="flow-step">
+                <div class="flow-num">2</div>
+                <div class="flow-content">
+                    <h4>Live Weather Integration</h4>
+                    <p>
+                        The Open-Meteo API provides real-time weather data for Bangalore, India — current
+                        temperature, humidity, wind speed, feels-like temperature, and a 6-hour forecast.
+                        The weather client caches data for 10 minutes and computes temperature trends
+                        (RISING, FALLING, STABLE) that feed into AI optimization decisions.
+                    </p>
+                </div>
+            </div>
+
+            <div class="flow-step">
+                <div class="flow-num">3</div>
+                <div class="flow-content">
+                    <h4>Context-Rich AI Prompts</h4>
+                    <p>
+                        Every Bedrock call includes the full device state, last 50 events, active anomalies,
+                        weather summary, forecast, temperature trend, and learned user preferences. The system
+                        prompt instructs Claude to speak like a "helpful neighbor" — no jargon, dollar estimates,
+                        and one clear action per response.
+                    </p>
+                </div>
+            </div>
+
+            <div class="flow-step">
+                <div class="flow-num">4</div>
+                <div class="flow-content">
+                    <h4>Proactive Intelligence</h4>
+                    <p>
+                        The system doesn't wait for users to ask questions. It proactively alerts when anomalies
+                        are detected, when weather changes significantly, and when the AI auto-adjusts the
+                        thermostat. Alerts appear in the chat as advisor messages with emoji indicators.
+                    </p>
+                </div>
+            </div>
+
+            <div class="flow-step">
+                <div class="flow-num">5</div>
+                <div class="flow-content">
+                    <h4>User Preference Learning</h4>
+                    <p>
+                        When users manually override the thermostat, the system records the pattern — what mode,
+                        what temperature, at what outdoor conditions, and what time. These patterns are injected
+                        into the AI optimization prompt so Bedrock learns to respect user preferences over time.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Project structure -->
+        <div class="mt-4">
+            <h3 class="mb-2">Project Structure</h3>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-filename">Directory Layout</span>
+                    <span class="code-lang">tree</span>
+                </div>
+                <div class="code-body"><pre>smart-home-energy-advisor/
+├── build.gradle                          <span class="cmt"># Gradle build config (Spring Boot 3.2, Java 17)</span>
+├── settings.gradle                       <span class="cmt"># Project name</span>
+├── gradlew                               <span class="cmt"># Gradle wrapper script</span>
+├── README.md                             <span class="cmt"># Quick start guide</span>
+├── gradle/
+│   └── wrapper/
+│       ├── gradle-wrapper.jar
+│       └── gradle-wrapper.properties
+└── src/
+    └── main/
+        ├── java/com/amazon/energyadvisor/
+        │   ├── Application.java          <span class="cmt"># Spring Boot entry point</span>
+        │   ├── ai/
+        │   │   ├── BedrockClient.java    <span class="cmt"># Amazon Bedrock integration</span>
+        │   │   └── PromptBuilder.java    <span class="cmt"># Context-rich prompt construction</span>
+        │   ├── api/
+        │   │   └── AdvisorController.java <span class="cmt"># REST API (12 endpoints)</span>
+        │   ├── engine/
+        │   │   └── AnomalyEngine.java    <span class="cmt"># Real-time anomaly detection</span>
+        │   ├── model/
+        │   │   ├── Anomaly.java          <span class="cmt"># Anomaly data model</span>
+        │   │   ├── ChatRequest.java      <span class="cmt"># Chat input DTO</span>
+        │   │   ├── ChatResponse.java     <span class="cmt"># Chat output DTO</span>
+        │   │   ├── DeviceState.java      <span class="cmt"># Thermostat state model</span>
+        │   │   └── ThermostatEvent.java  <span class="cmt"># Event data model</span>
+        │   ├── simulator/
+        │   │   └── EventGenerator.java   <span class="cmt"># Physics-based HVAC simulator</span>
+        │   ├── store/
+        │   │   └── EventStore.java       <span class="cmt"># H2 database persistence</span>
+        │   └── weather/
+        │       └── WeatherClient.java    <span class="cmt"># Open-Meteo weather integration</span>
+        └── resources/
+            ├── application.yml           <span class="cmt"># App configuration</span>
+            └── static/
+                ├── index.html            <span class="cmt"># Main dashboard</span>
+                ├── chatbot.html          <span class="cmt"># Standalone chatbot page</span>
+                ├── app.js                <span class="cmt"># Dashboard JavaScript</span>
+                └── style.css             <span class="cmt"># Dashboard styles</span></pre></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ================================================================
+     SECTION 2: THE 3 PILLARS
+     ================================================================ -->
+<section id="pillars">
+    <div class="container">
+        <div class="section-header">
+            <div class="section-number">2</div>
+            <h2>The 3 Intelligence Pillars</h2>
+            <p>Every feature in the app maps to one of three core intelligence pillars</p>
+        </div>
+
+        <!-- Pillar 1: HVAC Health -->
+        <div class="pillar-card health">
+            <div class="pillar-number">PILLAR 1</div>
+            <h3>🔧 HVAC Health Intelligence</h3>
+            <p>
+                Continuously monitors the health of your HVAC system by analyzing component behavior,
+                runtime patterns, and maintenance indicators. The system detects problems before they
+                become expensive failures.
+            </p>
+
+            <h4 class="mt-3 mb-2">Anomaly Detectors</h4>
+            <ul class="pillar-features">
+                <li>
+                    <strong>Auxiliary Heater Overuse</strong> — Triggers when the aux heater runs 3+ times
+                    in a day while outdoor temperature is above 45°F. At those temperatures, the primary
+                    heater should handle the load alone. This often indicates a clogged filter, refrigerant
+                    leak, or failing compressor. The system estimates $15-20/month in wasted energy.
+                </li>
+                <li>
+                    <strong>Filter Degradation</strong> — Tracks total HVAC runtime hours since the last
+                    filter change. When runtime exceeds 450 hours AND auxiliary heater usage is trending up,
+                    it alerts the homeowner. A dirty filter restricts airflow, forcing the system to work
+                    harder and use the backup heater more frequently — increasing costs 2-3x.
+                </li>
+                <li>
+                    <strong>Connectivity Loss</strong> — Detects when the thermostat goes offline. Reports
+                    the last known state (mode, indoor temp, outdoor temp) so the homeowner knows what
+                    conditions the home was left in. Severity is CRITICAL because an offline thermostat
+                    can't respond to temperature changes or DR events.
+                </li>
+            </ul>
+
+            <h4 class="mt-3 mb-2">How It Works in the Simulator</h4>
+            <p>
+                The EventGenerator seeds the simulation with 200 hours of total runtime and 2 aux heater
+                cycles already recorded. As the simulation progresses, the anomaly engine evaluates state
+                on every tick. When conditions match a detection rule, it creates an Anomaly object with
+                a unique ID, severity level, description, and recommendation. The AdvisorController then
+                sends the anomaly to Bedrock to generate a friendly, homeowner-readable alert.
+            </p>
+
+            <div class="info-box tip">
+                <div class="info-box-title">💡 Real-World Application</div>
+                <p>
+                    On a real Snyder thermostat, these detectors would analyze actual telemetry events
+                    from the device. The physics would be real — not simulated — but the anomaly detection
+                    logic and AI integration would work identically.
+                </p>
+            </div>
+        </div>
+
+        <!-- Pillar 2: Energy Bill -->
+        <div class="pillar-card billing">
+            <div class="pillar-number">PILLAR 2</div>
+            <h3>💰 Energy Bill Explainability</h3>
+            <p>
+                Correlates HVAC runtime with real weather data to explain why energy costs are what they are.
+                Instead of just showing a number, the system tells you <em>why</em> your bill is high and
+                what's driving the cost.
+            </p>
+
+            <h4 class="mt-3 mb-2">Cost Calculation Model</h4>
+            <ul class="pillar-features">
+                <li>
+                    <strong>Cooler Cost</strong> — Runtime hours × 3.5 kW (typical AC draw) × $0.16/kWh.
+                    A cooler running 5 hours costs approximately $2.80/day or $84/month.
+                </li>
+                <li>
+                    <strong>Heater Cost</strong> — Runtime hours × 10.0 kW (electric heater draw) × $0.16/kWh.
+                    Electric heating is significantly more expensive than cooling.
+                </li>
+                <li>
+                    <strong>Auxiliary Heater Cost</strong> — Runtime hours × 15.0 kW (resistance heating) × $0.16/kWh.
+                    Aux heating is the most expensive HVAC operation — 4x the cost of cooling per hour.
+                </li>
+                <li>
+                    <strong>Monthly Projection</strong> — Today's total cost × 30 days. Simple but effective
+                    for giving homeowners a sense of their trajectory.
+                </li>
+            </ul>
+
+            <h4 class="mt-3 mb-2">Anomaly Detectors</h4>
+            <ul class="pillar-features">
+                <li>
+                    <strong>Runtime Spike</strong> — Triggers when the cooler has run more than 6 hours in a
+                    day while outdoor temperature is below 90°F. At moderate temperatures, 6+ hours of cooling
+                    suggests the system is working harder than it should — possibly due to poor insulation,
+                    a low setpoint, or equipment issues.
+                </li>
+            </ul>
+
+            <h4 class="mt-3 mb-2">Savings Analysis</h4>
+            <p>
+                The <span class="inline-code">/api/savings</span> endpoint calculates how much the AI saves
+                compared to running without optimization:
+            </p>
+            <ul class="pillar-features">
+                <li><strong>AI Optimization</strong> — 15% reduction through smart setpoint adjustments</li>
+                <li><strong>Filter Maintenance</strong> — 10% reduction from clean filter efficiency</li>
+                <li><strong>DR Participation</strong> — $0.40/hour × 2 hours × 3.5 events/week savings</li>
+            </ul>
+
+            <div class="info-box note">
+                <div class="info-box-title">📊 Weather Correlation</div>
+                <p>
+                    When a user asks "Why is my energy bill high?", the AI receives the full weather context —
+                    current temperature, humidity, wind, feels-like temperature, and 6-hour forecast. It can
+                    explain that a 95°F day with high humidity forces the AC to run longer, or that a cold
+                    snap triggered expensive auxiliary heating.
+                </p>
+            </div>
+        </div>
+
+        <!-- Pillar 3: DR & Clean Energy -->
+        <div class="pillar-card dr">
+            <div class="pillar-number">PILLAR 3</div>
+            <h3>🌿 Demand Response &amp; Clean Energy Advisor</h3>
+            <p>
+                Prepares for demand response events, explains PRISM impact, and suggests pre-cooling/heating
+                strategies to maintain comfort while reducing grid load during peak demand periods.
+            </p>
+
+            <h4 class="mt-3 mb-2">DR Event Lifecycle</h4>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <h4>📋 SCHEDULED (1:30 PM)</h4>
+                    <p>
+                        A demand response event is announced. The system notifies the homeowner and begins
+                        planning. The anomaly engine creates a DR_PREPARATION anomaly with pre-cooling
+                        recommendations.
+                    </p>
+                </div>
+                <div class="timeline-item">
+                    <h4>❄️ PRE_COOLING (1:45 PM)</h4>
+                    <p>
+                        The system lowers the setpoint by 2°F to build a thermal buffer. This "banks" cold
+                        air in the home so it stays comfortable when the AC reduces output during the event.
+                        Pre-cooling takes about 45 minutes based on the home's cooling pattern.
+                    </p>
+                </div>
+                <div class="timeline-item">
+                    <h4>⚡ ACTIVE (3:00 PM)</h4>
+                    <p>
+                        The DR event begins. The setpoint is raised by 4°F (net +2°F from original) to reduce
+                        grid load. The Energy Star score gets a +5 bonus for DR participation. The AI explains
+                        what's happening and reassures the homeowner.
+                    </p>
+                </div>
+                <div class="timeline-item">
+                    <h4>🔄 RECOVERY (5:00 PM)</h4>
+                    <p>
+                        The event ends. The setpoint is lowered by 2°F to begin restoring comfort. The system
+                        avoids snapping back to the original setpoint immediately to prevent a demand spike
+                        (the "rebound effect").
+                    </p>
+                </div>
+                <div class="timeline-item">
+                    <h4>✅ NONE (5:30 PM)</h4>
+                    <p>
+                        Recovery complete. Normal operation resumes. The system calculates how much energy
+                        was saved during the event and reports it to the homeowner.
+                    </p>
+                </div>
+            </div>
+
+            <h4 class="mt-3 mb-2">DR Event Frequency</h4>
+            <p>
+                The simulator generates DR events 3-4 times per simulated week, matching real-world patterns
+                in regions with active demand response programs. Events occur on Monday, Wednesday, Thursday,
+                and occasionally Friday — typically during afternoon peak hours (2-5 PM).
+            </p>
+
+            <div class="info-box warning">
+                <div class="info-box-title">⚡ PRISM Integration</div>
+                <p>
+                    PRISM (Proactive Resource and Intelligent Scheduling Manager) is Amazon's clean energy
+                    optimization framework. In a production deployment, the DR advisor would integrate with
+                    PRISM to align thermostat behavior with grid carbon intensity — running the AC harder
+                    when the grid is clean (solar/wind) and reducing load when it's dirty (coal/gas).
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ================================================================
+     SECTION 3: ARCHITECTURE
+     ================================================================ -->
+<section id="architecture">
+    <div class="container">
+        <div class="section-header">
+            <div class="section-number">3</div>
+            <h2>System Architecture</h2>
+            <p>How the components connect and data flows through the system</p>
+        </div>
+
+        <div class="arch-diagram">
+            <h3 class="mb-3">Data Flow</h3>
+            <div class="arch-flow">
+                <div class="arch-box simulator">🌡️ EventGenerator<br><small>HVAC Physics</small></div>
+                <div class="arch-arrow">→</div>
+                <div class="arch-box store">💾 EventStore<br><small>H2 Database</small></div>
+                <div class="arch-arrow">→</div>
+                <div class="arch-box engine">🔍 AnomalyEngine<br><small>5 Detectors</small></div>
+                <div class="arch-arrow">→</div>
+                <div class="arch-box bedrock">🤖 BedrockClient<br><small>Claude Sonnet</small></div>
+                <div class="arch-arrow">→</div>
+                <div class="arch-box api">🔌 REST API<br><small>12 Endpoints</small></div>
+                <div class="arch-arrow">→</div>
+                <div class="arch-box ui">🖥️ Web UI<br><small>Dashboard + Chat</small></div>
+            </div>
+        </div>
+
+        <h3 class="mb-2">Component Details</h3>
+
+        <div class="card-grid">
+            <div class="card">
+                <div class="card-icon">🌡️</div>
+                <h3>EventGenerator</h3>
+                <p>
+                    The heart of the simulation. Runs on a 2-second tick cycle via Spring's
+                    <span class="inline-code">@Scheduled</span> annotation. Each tick advances
+                    simulated time by 5 minutes and generates thermostat events based on HVAC
+                    physics constants:
+                </p>
+                <ul class="pillar-features mt-2">
+                    <li>Cooling rate: 0.15°F/min when cooler runs</li>
+                    <li>Heating rate: 0.12°F/min for primary heater</li>
+                    <li>Aux heating rate: 0.20°F/min (faster but expensive)</li>
+                    <li>Drift rate: 0.03°F/min toward outdoor temp</li>
+                </ul>
+            </div>
+            <div class="card">
+                <div class="card-icon">💾</div>
+                <h3>EventStore</h3>
+                <p>
+                    Persists all thermostat events in an H2 in-memory database. Creates an indexed
+                    <span class="inline-code">events</span> table on startup with columns for
+                    device_id, event_type, event_value, numeric_value, and timestamp. Supports
+                    queries by device, type, time range, and count.
+                </p>
+            </div>
+            <div class="card">
+                <div class="card-icon">🔍</div>
+                <h3>AnomalyEngine</h3>
+                <p>
+                    Evaluates device state on every simulation tick. Maintains a thread-safe list
+                    of active anomalies using <span class="inline-code">CopyOnWriteArrayList</span>.
+                    Deduplicates by checking if an unacknowledged anomaly of the same category
+                    already exists for the device.
+                </p>
+            </div>
+            <div class="card">
+                <div class="card-icon">🤖</div>
+                <h3>BedrockClient</h3>
+                <p>
+                    Wraps the AWS SDK's <span class="inline-code">BedrockRuntimeClient</span>.
+                    Sends Messages API requests to Claude with system prompts and user messages.
+                    Uses <span class="inline-code">ProfileCredentialsProvider</span> for auth.
+                    Max tokens set to 1024 for concise responses.
+                </p>
+            </div>
+            <div class="card">
+                <div class="card-icon">📝</div>
+                <h3>PromptBuilder</h3>
+                <p>
+                    Constructs context-rich prompts for different scenarios: chat responses,
+                    anomaly alerts, and thermostat optimization. Injects full device state,
+                    recent events, anomalies, weather data, and user preferences into every prompt.
+                </p>
+            </div>
+            <div class="card">
+                <div class="card-icon">☀️</div>
+                <h3>WeatherClient</h3>
+                <p>
+                    Fetches real weather data from Open-Meteo API for Bangalore (12.97°N, 77.59°E).
+                    Caches for 10 minutes. Provides current conditions, 6-hour forecast, and
+                    temperature trend (RISING/FALLING/STABLE) based on 3-hour lookahead.
+                </p>
+            </div>
+        </div>
+
+        <h3 class="mt-4 mb-2">Scheduled Tasks</h3>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Task</th>
+                        <th>Interval</th>
+                        <th>Initial Delay</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="inline-code">simulationTick()</span></td>
+                        <td>2 seconds</td>
+                        <td>None</td>
+                        <td>Advances HVAC simulation, saves events, evaluates anomalies</td>
+                    </tr>
+                    <tr>
+                        <td><span class="inline-code">autoOptimize()</span></td>
+                        <td>60 seconds</td>
+                        <td>15 seconds</td>
+                        <td>Bedrock analyzes state and adjusts thermostat settings</td>
+                    </tr>
+                    <tr>
+                        <td><span class="inline-code">weatherFeedback()</span></td>
+                        <td>5 minutes</td>
+                        <td>30 seconds</td>
+                        <td>Proactive weather-based tips when conditions change</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h3 class="mt-4 mb-2">Concurrency Model</h3>
+        <p class="text-muted mb-2">
+            The application uses Spring's default thread pool for scheduled tasks. Thread safety
+            is achieved through:
+        </p>
+        <ul class="pillar-features">
+            <li><span class="inline-code">CopyOnWriteArrayList</span> for active anomalies and proactive alerts</li>
+            <li><span class="inline-code">volatile</span> boolean for manual override flag in EventGenerator</li>
+            <li>Atomic state updates within the single-threaded simulation tick</li>
+            <li>H2's built-in connection pooling for database access</li>
+        </ul>
+    </div>
+</section>
+
+
+<!-- ================================================================
+     SECTION 4: TECH STACK
+     ================================================================ -->
+<section id="tech-stack">
+    <div class="container">
+        <div class="section-header">
+            <div class="section-number">4</div>
+            <h2>Tech Stack</h2>
+            <p>Every technology choice and why it was made</p>
+        </div>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Technology</th>
+                        <th>Version</th>
+                        <th>Purpose</th>
+                        <th>Why This Choice</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Java</strong></td>
+                        <td><span class="badge badge-blue">17</span></td>
+                        <td>Application language</td>
+                        <td>LTS release, text blocks, records, pattern matching. Standard for Amazon services.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Spring Boot</strong></td>
+                        <td><span class="badge badge-green">3.2.5</span></td>
+                        <td>Application framework</td>
+                        <td>Auto-configuration, embedded Tomcat, scheduling, dependency injection. Production-ready out of the box.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Spring Web</strong></td>
+                        <td><span class="badge badge-green">3.2.5</span></td>
+                        <td>REST API</td>
+                        <td>Annotation-based controllers, JSON serialization, static resource serving.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Spring JDBC</strong></td>
+                        <td><span class="badge badge-green">3.2.5</span></td>
+                        <td>Database access</td>
+                        <td>Lightweight — no ORM overhead. JdbcTemplate for simple queries. Perfect for an event store.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>H2 Database</strong></td>
+                        <td><span class="badge badge-orange">2.2.224</span></td>
+                        <td>Event persistence</td>
+                        <td>In-memory, zero config, embedded. No external database needed. Built-in web console at /h2.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>AWS SDK (Bedrock)</strong></td>
+                        <td><span class="badge badge-purple">2.25.16</span></td>
+                        <td>AI integration</td>
+                        <td>Official SDK for Amazon Bedrock. InvokeModel API with Claude's Messages format.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Jackson</strong></td>
+                        <td><span class="badge badge-blue">managed</span></td>
+                        <td>JSON processing</td>
+                        <td>Industry standard. Used for Bedrock request/response serialization and API responses.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Lombok</strong></td>
+                        <td><span class="badge badge-orange">1.18.30</span></td>
+                        <td>Boilerplate reduction</td>
+                        <td>Compile-only dependency. Reduces getter/setter boilerplate in model classes.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Open-Meteo API</strong></td>
+                        <td><span class="badge badge-green">free</span></td>
+                        <td>Weather data</td>
+                        <td>No API key required. Free tier supports 10,000 requests/day. Provides current + forecast data.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Vanilla JS</strong></td>
+                        <td><span class="badge badge-blue">ES6+</span></td>
+                        <td>Frontend</td>
+                        <td>No build step, no framework overhead. Fetch API for polling. DOM manipulation for updates.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Gradle</strong></td>
+                        <td><span class="badge badge-blue">wrapper</span></td>
+                        <td>Build tool</td>
+                        <td>Spring Boot plugin for bootRun/bootJar. Dependency management via Spring BOM.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h3 class="mt-4 mb-2">Build Configuration</h3>
+        <div class="code-block">
+            <div class="code-header">
+                <span class="code-filename">build.gradle</span>
+                <span class="code-lang">Groovy</span>
+            </div>
+            <div class="code-body"><pre><span class="kw">plugins</span> {
+    <span class="fn">id</span> <span class="str">'java'</span>
+    <span class="fn">id</span> <span class="str">'org.springframework.boot'</span> <span class="kw">version</span> <span class="str">'3.2.5'</span>
+    <span class="fn">id</span> <span class="str">'io.spring.dependency-management'</span> <span class="kw">version</span> <span class="str">'1.1.4'</span>
+}
+
+<span class="type">group</span> = <span class="str">'com.amazon'</span>
+<span class="type">version</span> = <span class="str">'1.0.0'</span>
+<span class="type">sourceCompatibility</span> = <span class="str">'17'</span>
+
+<span class="kw">repositories</span> {
+    <span class="fn">mavenCentral</span>()
+}
+
+<span class="kw">dependencies</span> {
+    <span class="fn">implementation</span> <span class="str">'org.springframework.boot:spring-boot-starter-web'</span>
+    <span class="fn">implementation</span> <span class="str">'com.h2database:h2:2.2.224'</span>
+    <span class="fn">implementation</span> <span class="str">'org.springframework.boot:spring-boot-starter-jdbc'</span>
+    <span class="fn">implementation</span> <span class="str">'software.amazon.awssdk:bedrockruntime:2.25.16'</span>
+    <span class="fn">implementation</span> <span class="str">'com.fasterxml.jackson.core:jackson-databind'</span>
+    <span class="fn">implementation</span> <span class="str">'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'</span>
+
+    <span class="fn">compileOnly</span> <span class="str">'org.projectlombok:lombok:1.18.30'</span>
+    <span class="fn">annotationProcessor</span> <span class="str">'org.projectlombok:lombok:1.18.30'</span>
+
+    <span class="fn">testImplementation</span> <span class="str">'org.springframework.boot:spring-boot-starter-test'</span>
+}
+
+<span class="fn">tasks</span>.<span class="fn">named</span>(<span class="str">'test'</span>) {
+    <span class="fn">useJUnitPlatform</span>()
+}</pre></div>
+        </div>
+
+        <h3 class="mt-4 mb-2">Application Configuration</h3>
+        <div class="code-block">
+            <div class="code-header">
+                <span class="code-filename">src/main/resources/application.yml</span>
+                <span class="code-lang">YAML</span>
+            </div>
+            <div class="code-body"><pre><span class="type">server</span>:
+  <span class="prop">port</span>: <span class="num">9090</span>
+
+<span class="type">spring</span>:
+  <span class="type">datasource</span>:
+    <span class="prop">url</span>: <span class="str">jdbc:h2:mem:energyadvisor</span>
+    <span class="prop">driver-class-name</span>: <span class="str">org.h2.Driver</span>
+  <span class="type">h2</span>:
+    <span class="type">console</span>:
+      <span class="prop">enabled</span>: <span class="kw">true</span>
+      <span class="prop">path</span>: <span class="str">/h2</span>
+
+<span class="cmt"># Amazon Bedrock</span>
+<span class="type">bedrock</span>:
+  <span class="prop">enabled</span>: <span class="kw">true</span>
+  <span class="prop">model-id</span>: <span class="str">us.anthropic.claude-sonnet-4-5-20250929-v1:0</span>
+  <span class="prop">region</span>: <span class="str">us-east-1</span>
+
+<span class="cmt"># Weather (Open-Meteo, no API key needed) - Bangalore</span>
+<span class="type">weather</span>:
+  <span class="prop">default-lat</span>: <span class="str">"12.9716"</span>
+  <span class="prop">default-lon</span>: <span class="str">"77.5946"</span></pre></div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ================================================================
+     SECTION 5: SOURCE CODE WALKTHROUGH
+     ================================================================ -->
+<section id="source-code">
+    <div class="container">
+        <div class="section-header">
+            <div class="section-number">5</div>
+            <h2>Complete Source Code</h2>
+            <p>Every Java class, fully annotated with explanations</p>
+        </div>
+
+        <!-- 5.1 Application.java -->
+        <h3 class="mb-2">5.1 Application Entry Point</h3>
+        <p class="text-muted mb-2">
+            The Spring Boot entry point. <span class="inline-code">@EnableScheduling</span> activates
+            the scheduled task executor that drives the simulation tick, auto-optimization, and weather feedback.
+        </p>
+        <div class="code-block">
+            <div class="code-header">
+                <span class="code-filename">src/main/java/com/amazon/energyadvisor/Application.java</span>
+                <span class="code-lang">Java</span>
+            </div>
+            <div class="code-body"><pre><span class="kw">package</span> com.amazon.energyadvisor;
+
+<span class="kw">import</span> org.springframework.boot.SpringApplication;
+<span class="kw">import</span> org.springframework.boot.autoconfigure.SpringBootApplication;
+<span class="kw">import</span> org.springframework.scheduling.annotation.EnableScheduling;
+
+<span class="ann">@SpringBootApplication</span>
+<span class="ann">@EnableScheduling</span>
+<span class="kw">public class</span> <span class="type">Application</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="type">String</span>[] args) {
+        SpringApplication.<span class="fn">run</span>(Application.<span class="kw">class</span>, args);
+    }
+}</pre></div>
+        </div>
+
+        <div class="info-box note">
+            <div class="info-box-title">📝 Why @EnableScheduling?</div>
+            <p>
+                Without this annotation, the <span class="inline-code">@Scheduled</span> methods in
+                AdvisorController would never execute. Spring Boot doesn't enable scheduling by default
+                because it creates a thread pool — you opt in explicitly.
+            </p>
+        </div>
+
+        <!-- 5.2 BedrockClient.java -->
+        <h3 class="mt-4 mb-2">5.2 BedrockClient — AI Integration</h3>
+        <p class="text-muted mb-2">
+            Wraps the AWS Bedrock SDK to send chat requests to Claude. Uses the Messages API format
+            with system prompts for context injection.
+        </p>
+        <div class="code-block">
+            <div class="code-header">
+                <span class="code-filename">src/main/java/com/amazon/energyadvisor/ai/BedrockClient.java</span>
+                <span class="code-lang">Java</span>
+            </div>
+            <div class="code-body"><pre><span class="kw">package</span> com.amazon.energyadvisor.ai;
+
+<span class="kw">import</span> org.slf4j.Logger;
+<span class="kw">import</span> org.slf4j.LoggerFactory;
+<span class="kw">import</span> org.springframework.beans.factory.annotation.Value;
+<span class="kw">import</span> org.springframework.stereotype.Component;
+<span class="kw">import</span> software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
+<span class="kw">import</span> software.amazon.awssdk.core.SdkBytes;
+<span class="kw">import</span> software.amazon.awssdk.regions.Region;
+<span class="kw">import</span> software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeClient;
+<span class="kw">import</span> software.amazon.awssdk.services.bedrockruntime.model.InvokeModelRequest;
+<span class="kw">import</span> software.amazon.awssdk.services.bedrockruntime.model.InvokeModelResponse;
+<span class="kw">import</span> com.fasterxml.jackson.databind.JsonNode;
+<span class="kw">import</span> com.fasterxml.jackson.databind.ObjectMapper;
+<span class="kw">import</span> com.fasterxml.jackson.databind.node.ArrayNode;
+<span class="kw">import</span> com.fasterxml.jackson.databind.node.ObjectNode;
+<span class="kw">import</span> jakarta.annotation.PostConstruct;
+
+<span class="ann">@Component</span>
+<span class="kw">public class</span> <span class="type">BedrockClient</span> {
+
+    <span class="kw">private static final</span> <span class="type">Logger</span> log = LoggerFactory.<span class="fn">getLogger</span>(BedrockClient.<span class="kw">class</span>);
+    <span class="kw">private final</span> <span class="type">ObjectMapper</span> mapper = <span class="kw">new</span> ObjectMapper();
+
+    <span class="ann">@Value</span>(<span class="str">"${bedrock.model-id}"</span>)
+    <span class="kw">private</span> <span class="type">String</span> modelId;
+
+    <span class="ann">@Value</span>(<span class="str">"${bedrock.region:us-east-1}"</span>)
+    <span class="kw">private</span> <span class="type">String</span> region;
+
+    <span class="kw">private</span> <span class="type">BedrockRuntimeClient</span> client;
+
+    <span class="ann">@PostConstruct</span>
+    <span class="kw">public void</span> <span class="fn">init</span>() {
+        client = BedrockRuntimeClient.<span class="fn">builder</span>()
+                .<span class="fn">region</span>(Region.<span class="fn">of</span>(region))
+                .<span class="fn">credentialsProvider</span>(ProfileCredentialsProvider.<span class="fn">create</span>())
+                .<span class="fn">build</span>();
+        log.<span class="fn">info</span>(<span class="str">"Bedrock client initialized: model={}, region={}"</span>, modelId, region);
+    }
+
+    <span class="kw">public</span> <span class="type">String</span> <span class="fn">chat</span>(<span class="type">String</span> systemPrompt, <span class="type">String</span> userMessage) {
+        <span class="type">ObjectNode</span> body = mapper.<span class="fn">createObjectNode</span>();
+        body.<span class="fn">put</span>(<span class="str">"anthropic_version"</span>, <span class="str">"bedrock-2023-05-31"</span>);
+        body.<span class="fn">put</span>(<span class="str">"max_tokens"</span>, <span class="num">1024</span>);
+        body.<span class="fn">put</span>(<span class="str">"system"</span>, systemPrompt);
+
+        <span class="type">ArrayNode</span> messages = body.<span class="fn">putArray</span>(<span class="str">"messages"</span>);
+        <span class="type">ObjectNode</span> msg = messages.<span class="fn">addObject</span>();
+        msg.<span class="fn">put</span>(<span class="str">"role"</span>, <span class="str">"user"</span>);
+        <span class="type">ArrayNode</span> content = msg.<span class="fn">putArray</span>(<span class="str">"content"</span>);
+        content.<span class="fn">addObject</span>().<span class="fn">put</span>(<span class="str">"type"</span>, <span class="str">"text"</span>).<span class="fn">put</span>(<span class="str">"text"</span>, userMessage);
+
+        <span class="kw">try</span> {
+            <span class="type">InvokeModelRequest</span> request = InvokeModelRequest.<span class="fn">builder</span>()
+                    .<span class="fn">modelId</span>(modelId)
+                    .<span class="fn">contentType</span>(<span class="str">"application/json"</span>)
+                    .<span class="fn">accept</span>(<span class="str">"application/json"</span>)
+                    .<span class="fn">body</span>(SdkBytes.<span class="fn">fromUtf8String</span>(mapper.<span class="fn">writeValueAsString</span>(body)))
+                    .<span class="fn">build</span>();
+
+            <span class="type">InvokeModelResponse</span> response = client.<span class="fn">invokeModel</span>(request);
+            <span class="type">JsonNode</span> result = mapper.<span class="fn">readTree</span>(response.<span class="fn">body</span>().<span class="fn">asUtf8String</span>());
+            <span class="kw">return</span> result.<span class="fn">path</span>(<span class="str">"content"</span>).<span class="fn">get</span>(<span class="num">0</span>).<span class="fn">path</span>(<span class="str">"text"</span>).<span class="fn">asText</span>();
+        } <span class="kw">catch</span> (<span class="type">Exception</span> e) {
+            log.<span class="fn">error</span>(<span class="str">"Bedrock call failed: {}"</span>, e.<span class="fn">getMessage</span>());
+            <span class="kw">throw new</span> <span class="type">RuntimeException</span>(<span class="str">"Bedrock invocation failed"</span>, e);
+        }
+    }
+}</pre></div>
+        </div>
+
+        <div class="info-box tip">
+            <div class="info-box-title">🔑 Key Design Decisions</div>
+            <p>
+                <strong>ProfileCredentialsProvider</strong> — Uses ~/.aws/credentials for auth. In production,
+                you'd use IAM roles or container credentials.<br>
+                <strong>max_tokens: 1024</strong> — Keeps responses concise. The system prompt asks for 3-5 sentences,
+                so 1024 tokens is plenty.<br>
+                <strong>anthropic_version</strong> — Required by Bedrock's Claude integration. Must match the API version.
+            </p>
+        </div>
+
+        <!-- 5.3 PromptBuilder.java -->
+        <h3 class="mt-4 mb-2">5.3 PromptBuilder — Context-Rich Prompts</h3>
+        <p class="text-muted mb-2">
+            Constructs detailed system prompts that give Claude full context about the thermostat state,
+            recent events, anomalies, and weather. This is what makes the AI responses specific and actionable
+            rather than generic.
+        </p>
+        <div class="code-block">
+            <div class="code-header">
+                <span class="code-filename">src/main/java/com/amazon/energyadvisor/ai/PromptBuilder.java</span>
+                <span class="code-lang">Java</span>
+            </div>
+            <div class="code-body"><pre><span class="kw">package</span> com.amazon.energyadvisor.ai;
+
+<span class="kw">import</span> com.amazon.energyadvisor.model.Anomaly;
+<span class="kw">import</span> com.amazon.energyadvisor.model.DeviceState;
+<span class="kw">import</span> org.springframework.stereotype.Component;
+<span class="kw">import</span> java.util.List;
+<span class="kw">import</span> java.util.Map;
+
+<span class="ann">@Component</span>
+<span class="kw">public class</span> <span class="type">PromptBuilder</span> {
+
+    <span class="kw">public</span> <span class="type">String</span> <span class="fn">buildSystemPrompt</span>(<span class="type">DeviceState</span> state,
+            <span class="type">List</span>&lt;<span class="type">Map</span>&lt;<span class="type">String</span>, <span class="type">Object</span>&gt;&gt; recentEvents,
+            <span class="type">List</span>&lt;<span class="type">Anomaly</span>&gt; anomalies) {
+
+        <span class="type">StringBuilder</span> sb = <span class="kw">new</span> StringBuilder();
+
+        <span class="cmt">// Persona instructions — speak like a helpful neighbor</span>
+        sb.<span class="fn">append</span>(<span class="str">"You are a friendly Smart Home Energy Advisor. "</span>);
+        sb.<span class="fn">append</span>(<span class="str">"You talk to regular homeowners — NOT engineers.\n"</span>);
+        sb.<span class="fn">append</span>(<span class="str">"- Use simple, everyday language.\n"</span>);
+        sb.<span class="fn">append</span>(<span class="str">"- Say 'your AC' not 'cooler', 'backup heater' not 'auxiliary heater'.\n"</span>);
+        sb.<span class="fn">append</span>(<span class="str">"- Keep answers to 3-5 sentences.\n"</span>);
+        sb.<span class="fn">append</span>(<span class="str">"- Always include a specific dollar amount or time estimate.\n"</span>);
+        sb.<span class="fn">append</span>(<span class="str">"- End with ONE clear action the customer can take right now.\n\n"</span>);
+
+        <span class="cmt">// Full device state injection</span>
+        sb.<span class="fn">append</span>(<span class="str">"CURRENT DEVICE STATE:\n"</span>);
+        sb.<span class="fn">append</span>(String.<span class="fn">format</span>(<span class="str">"- Mode: %s\n"</span>, state.<span class="fn">getThermostatMode</span>()));
+        sb.<span class="fn">append</span>(String.<span class="fn">format</span>(<span class="str">"- Target Setpoint: %.1f°F\n"</span>, state.<span class="fn">getTargetSetpoint</span>()));
+        sb.<span class="fn">append</span>(String.<span class="fn">format</span>(<span class="str">"- Indoor Temp: %.1f°F\n"</span>, state.<span class="fn">getIndoorTemp</span>()));
+        sb.<span class="fn">append</span>(String.<span class="fn">format</span>(<span class="str">"- Outdoor Temp: %.1f°F\n"</span>, state.<span class="fn">getOutdoorTemp</span>()));
+        <span class="cmt">// ... heater, cooler, DR status, runtime hours ...</span>
+
+        <span class="cmt">// Active anomalies</span>
+        <span class="kw">if</span> (!anomalies.<span class="fn">isEmpty</span>()) {
+            sb.<span class="fn">append</span>(<span class="str">"\nACTIVE ANOMALIES:\n"</span>);
+            <span class="kw">for</span> (<span class="type">Anomaly</span> a : anomalies) {
+                sb.<span class="fn">append</span>(String.<span class="fn">format</span>(<span class="str">"- [%s] %s: %s\n"</span>,
+                    a.<span class="fn">getSeverity</span>(), a.<span class="fn">getCategory</span>(), a.<span class="fn">getDescription</span>()));
+            }
+        }
+
+        <span class="cmt">// Recent event timeline (last 50 events)</span>
+        <span class="kw">if</span> (!recentEvents.<span class="fn">isEmpty</span>()) {
+            sb.<span class="fn">append</span>(<span class="str">"\nRECENT EVENT TIMELINE:\n"</span>);
+            <span class="kw">for</span> (<span class="type">Map</span>&lt;<span class="type">String</span>, <span class="type">Object</span>&gt; e : recentEvents) {
+                sb.<span class="fn">append</span>(String.<span class="fn">format</span>(<span class="str">"- %s: %s = %s\n"</span>,
+                    e.<span class="fn">get</span>(<span class="str">"TS"</span>), e.<span class="fn">get</span>(<span class="str">"EVENT_TYPE"</span>), e.<span class="fn">get</span>(<span class="str">"EVENT_VALUE"</span>)));
+            }
+        }
+
+        <span class="kw">return</span> sb.<span class="fn">toString</span>();
+    }
+
+    <span class="cmt">// Anomaly alert prompt — 2 sentences max, emoji, dollar estimate</span>
+    <span class="kw">public</span> <span class="type">String</span> <span class="fn">buildAnomalyPrompt</span>(<span class="type">Anomaly</span> anomaly, <span class="type">DeviceState</span> state) {
+        <span class="kw">return</span> String.<span class="fn">format</span>(
+            <span class="str">"Write a friendly alert for a homeowner. "</span> +
+            <span class="str">"Issue: %s — %s. Indoor: %.1f°F, Outdoor: %.1f°F. "</span> +
+            <span class="str">"Recommendation: %s. Use simple language. 2 sentences max."</span>,
+            anomaly.<span class="fn">getCategory</span>(), anomaly.<span class="fn">getDescription</span>(),
+            state.<span class="fn">getIndoorTemp</span>(), state.<span class="fn">getOutdoorTemp</span>(),
+            anomaly.<span class="fn">getRecommendation</span>());
+    }
+
+    <span class="cmt">// Optimization prompt — returns JSON with mode, setpoint, reason</span>
+    <span class="kw">public</span> <span class="type">String</span> <span class="fn">buildOptimizePrompt</span>(<span class="type">DeviceState</span> state,
+            <span class="type">String</span> weatherSummary, <span class="type">List</span>&lt;<span class="type">Anomaly</span>&gt; anomalies,
+            <span class="type">String</span> forecast, <span class="type">String</span> trend) {
+
+        <span class="type">StringBuilder</span> sb = <span class="kw">new</span> StringBuilder();
+        sb.<span class="fn">append</span>(<span class="str">"You are an AI thermostat optimizer.\n"</span>);
+        sb.<span class="fn">append</span>(String.<span class="fn">format</span>(<span class="str">"STATE: mode=%s, setpoint=%.1f°F, "</span> +
+            <span class="str">"indoor=%.1f°F, outdoor=%.1f°F\n"</span>,
+            state.<span class="fn">getThermostatMode</span>(), state.<span class="fn">getTargetSetpoint</span>(),
+            state.<span class="fn">getIndoorTemp</span>(), state.<span class="fn">getOutdoorTemp</span>()));
+        sb.<span class="fn">append</span>(String.<span class="fn">format</span>(<span class="str">"Weather: %s\nForecast: %s\nTrend: %s\n"</span>,
+            weatherSummary, forecast, trend));
+
+        <span class="cmt">// Optimization rules</span>
+        sb.<span class="fn">append</span>(<span class="str">"Rules:\n"</span>);
+        sb.<span class="fn">append</span>(<span class="str">"- During DR: raise setpoint 2-4°F\n"</span>);
+        sb.<span class="fn">append</span>(<span class="str">"- If outdoor &lt; 75°F and comfortable: switch OFF\n"</span>);
+        sb.<span class="fn">append</span>(<span class="str">"- If outdoor &gt; 95°F: ensure COOL, don't go below 72°F\n"</span>);
+        sb.<span class="fn">append</span>(<span class="str">"- If trend FALLING: pre-adjust to avoid overcooling\n"</span>);
+        sb.<span class="fn">append</span>(<span class="str">"- If trend RISING: pre-cool before it gets hotter\n\n"</span>);
+        sb.<span class="fn">append</span>(<span class="str">"Respond ONLY with JSON: {\"mode\":\"COOL|HEAT|OFF\", "</span> +
+            <span class="str">"\"setpoint\": &lt;number&gt;, \"reason\": \"...\"}\n"</span>);
+
+        <span class="kw">return</span> sb.<span class="fn">toString</span>();
+    }
+}</pre></div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ================================================================
+     SECTION 6: DATA MODELS
+     ================================================================ -->
+<section id="models">
+    <div class="container">
+        <div class="section-header">
+            <div class="section-number">6</div>
+            <h2>Data Models</h2>
+            <p>The domain objects that represent thermostat state, events, and anomalies</p>
+        </div>
+
+        <!-- DeviceState -->
+        <h3 class="mb-2">6.1 DeviceState — The Thermostat</h3>
+        <p class="text-muted mb-2">
+            The central state object representing the Snyder thermostat at any point in time.
+            Updated on every simulation tick. Contains mode, temperatures, component status,
+            runtime accumulators, and demand response state.
+        </p>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr><th>Field</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td><span class="inline-code">deviceId</span></td><td>String</td><td>snyder-demo-001</td><td>Unique device identifier</td></tr>
+                    <tr><td><span class="inline-code">thermostatMode</span></td><td>String</td><td>OFF</td><td>COOL, HEAT, or OFF</td></tr>
+                    <tr><td><span class="inline-code">targetSetpoint</span></td><td>double</td><td>72.0</td><td>Target temperature in °F</td></tr>
+                    <tr><td><span class="inline-code">indoorTemp</span></td><td>double</td><td>72.0</td><td>Current indoor temperature</td></tr>
+                    <tr><td><span class="inline-code">outdoorTemp</span></td><td>double</td><td>75.0</td><td>Current outdoor temperature (from weather API)</td></tr>
+                    <tr><td><span class="inline-code">primaryHeaterRunning</span></td><td>boolean</td><td>false</td><td>Is the primary heater active?</td></tr>
+                    <tr><td><span class="inline-code">auxHeaterRunning</span></td><td>boolean</td><td>false</td><td>Is the auxiliary (backup) heater active?</td></tr>
+                    <tr><td><span class="inline-code">coolerRunning</span></td><td>boolean</td><td>false</td><td>Is the AC compressor active?</td></tr>
+                    <tr><td><span class="inline-code">fanRunning</span></td><td>boolean</td><td>false</td><td>Is the fan active?</td></tr>
+                    <tr><td><span class="inline-code">drStatus</span></td><td>String</td><td>NONE</td><td>NONE, SCHEDULED, PRE_COOLING, ACTIVE, RECOVERY</td></tr>
+                    <tr><td><span class="inline-code">nextDrEvent</span></td><td>String</td><td>""</td><td>Human-readable next DR event description</td></tr>
+                    <tr><td><span class="inline-code">energyStarScore</span></td><td>int</td><td>78</td><td>0-100 Energy Star V2 compliance score</td></tr>
+                    <tr><td><span class="inline-code">online</span></td><td>boolean</td><td>true</td><td>Is the device connected?</td></tr>
+                    <tr><td><span class="inline-code">primaryHeaterRuntimeToday</span></td><td>long</td><td>0</td><td>Seconds of heater runtime today</td></tr>
+                    <tr><td><span class="inline-code">auxHeaterRuntimeToday</span></td><td>long</td><td>0</td><td>Seconds of aux heater runtime today</td></tr>
+                    <tr><td><span class="inline-code">coolerRuntimeToday</span></td><td>long</td><td>0</td><td>Seconds of cooler runtime today</td></tr>
+                    <tr><td><span class="inline-code">auxHeaterCyclesToday</span></td><td>int</td><td>0</td><td>Number of aux heater on/off cycles today</td></tr>
+                    <tr><td><span class="inline-code">totalHvacRuntimeHours</span></td><td>long</td><td>200</td><td>Total hours since last filter change</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- ThermostatEvent -->
+        <h3 class="mt-4 mb-2">6.2 ThermostatEvent — What Happened</h3>
+        <p class="text-muted mb-2">
+            Represents a single event generated by the thermostat. Persisted in the H2 database.
+            Events are the raw data that the anomaly engine and AI analyze.
+        </p>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr><th>Event Type</th><th>Example Value</th><th>When Generated</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td><span class="badge badge-blue">THERMOSTAT_MODE</span></td><td>COOL, HEAT, OFF</td><td>Mode changes</td></tr>
+                    <tr><td><span class="badge badge-blue">TARGET_SETPOINT</span></td><td>74.0</td><td>Setpoint adjustments</td></tr>
+                    <tr><td><span class="badge badge-green">PRIMARY_HEATER_OP</span></td><td>RUNNING, IDLE</td><td>Heater on/off</td></tr>
+                    <tr><td><span class="badge badge-orange">AUX_HEATER_OP</span></td><td>RUNNING, IDLE</td><td>Aux heater on/off</td></tr>
+                    <tr><td><span class="badge badge-blue">COOLER_OP</span></td><td>RUNNING, IDLE</td><td>AC compressor on/off</td></tr>
+                    <tr><td><span class="badge badge-blue">FAN_OP</span></td><td>RUNNING, IDLE</td><td>Fan on/off</td></tr>
+                    <tr><td><span class="badge badge-green">PRECISE_TEMPERATURE</span></td><td>73.4</td><td>Every tick (temperature reading)</td></tr>
+                    <tr><td><span class="badge badge-purple">DR_STATUS</span></td><td>SCHEDULED, ACTIVE, etc.</td><td>DR lifecycle transitions</td></tr>
+                    <tr><td><span class="badge badge-red">CONNECTIVITY</span></td><td>ONLINE, OFFLINE</td><td>Connection state changes</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Anomaly -->
+        <h3 class="mt-4 mb-2">6.3 Anomaly — What's Wrong</h3>
+        <p class="text-muted mb-2">
+            Represents a detected issue with the HVAC system. Each anomaly has a category, severity,
+            human-readable description, and actionable recommendation.
+        </p>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr><th>Category</th><th>Severity</th><th>Pillar</th><th>Trigger Condition</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="badge badge-orange">AUX_HEATER_OVERUSE</span></td>
+                        <td><span class="badge badge-orange">WARNING</span></td>
+                        <td>Health</td>
+                        <td>3+ aux cycles today AND outdoor &gt; 45°F</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge badge-blue">FILTER_DEGRADATION</span></td>
+                        <td><span class="badge badge-blue">INFO</span></td>
+                        <td>Health</td>
+                        <td>Runtime &gt; 450h AND 2+ aux cycles today</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge badge-blue">RUNTIME_SPIKE</span></td>
+                        <td><span class="badge badge-blue">INFO</span></td>
+                        <td>Billing</td>
+                        <td>Cooler &gt; 6h today AND outdoor &lt; 90°F</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge badge-blue">DR_PREPARATION</span></td>
+                        <td><span class="badge badge-blue">INFO</span></td>
+                        <td>DR</td>
+                        <td>DR status = SCHEDULED</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge badge-red">CONNECTIVITY_LOSS</span></td>
+                        <td><span class="badge badge-red">CRITICAL</span></td>
+                        <td>Health</td>
+                        <td>Device offline</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- ChatRequest/ChatResponse -->
+        <h3 class="mt-4 mb-2">6.4 Chat DTOs</h3>
+        <div class="card-grid">
+            <div class="card">
+                <h3>ChatRequest</h3>
+                <p>Input from the user's chat message.</p>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-filename">ChatRequest.java</span>
+                        <span class="code-lang">Java</span>
+                    </div>
+                    <div class="code-body"><pre><span class="kw">public class</span> <span class="type">ChatRequest</span> {
+    <span class="kw">private</span> <span class="type">String</span> message;
+    <span class="kw">private</span> <span class="type">String</span> deviceId;
+    <span class="cmt">// getters and setters</span>
+}</pre></div>
+                </div>
+            </div>
+            <div class="card">
+                <h3>ChatResponse</h3>
+                <p>Output from the AI advisor or proactive alert.</p>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-filename">ChatResponse.java</span>
+                        <span class="code-lang">Java</span>
+                    </div>
+                    <div class="code-body"><pre><span class="kw">public class</span> <span class="type">ChatResponse</span> {
+    <span class="kw">private</span> <span class="type">String</span> response;
+    <span class="kw">private</span> <span class="type">Instant</span> timestamp;
+    <span class="kw">private</span> <span class="kw">boolean</span> proactive;
+    <span class="cmt">// true = system-initiated alert</span>
+    <span class="cmt">// false = user-initiated chat</span>
+}</pre></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ================================================================
+     SECTION 7: CORE ENGINE CODE
+     ================================================================ -->
+<section id="engine-code">
+    <div class="container">
+        <div class="section-header">
+            <div class="section-number">7</div>
+            <h2>Core Engine Code</h2>
+            <p>The simulator, anomaly engine, event store, and weather client</p>
+        </div>
+
+        <!-- EventGenerator -->
+        <h3 class="mb-2">7.1 EventGenerator — HVAC Physics Simulator</h3>
+        <p class="text-muted mb-2">
+            The most complex class in the project. Simulates realistic HVAC behavior including
+            thermal drift, compressor cycling, auxiliary heater activation, demand response lifecycle,
+            and Energy Star scoring. Each tick represents 5 simulated minutes.
+        </p>
+
+        <div class="info-box note">
+            <div class="info-box-title">🌡️ Physics Model</div>
+            <p>
+                Indoor temperature drifts toward outdoor temperature at 0.03°F/min (natural heat transfer).
+                When the cooler runs, it pulls temperature down at 0.15°F/min. The primary heater pushes
+                up at 0.12°F/min, and the aux heater at 0.20°F/min. These rates create realistic oscillation
+                patterns around the setpoint.
+            </p>
+        </div>
+
+        <div class="code-block">
+            <div class="code-header">
+                <span class="code-filename">src/main/java/com/amazon/energyadvisor/simulator/EventGenerator.java</span>
+                <span class="code-lang">Java</span>
+            </div>
+            <div class="code-body"><pre><span class="ann">@Component</span>
+<span class="kw">public class</span> <span class="type">EventGenerator</span> {
+
+    <span class="kw">private static final</span> <span class="type">String</span> DEVICE_ID = <span class="str">"snyder-demo-001"</span>;
+
+    <span class="cmt">// HVAC physics constants</span>
+    <span class="kw">private static final double</span> COOLING_RATE = <span class="num">0.15</span>;    <span class="cmt">// °F/min when cooler runs</span>
+    <span class="kw">private static final double</span> HEATING_RATE = <span class="num">0.12</span>;    <span class="cmt">// °F/min primary heater</span>
+    <span class="kw">private static final double</span> AUX_HEATING_RATE = <span class="num">0.20</span>; <span class="cmt">// °F/min aux heater</span>
+    <span class="kw">private static final double</span> DRIFT_RATE = <span class="num">0.03</span>;      <span class="cmt">// °F/min toward outdoor</span>
+
+    <span class="kw">private final</span> <span class="type">WeatherClient</span> weather;
+    <span class="kw">private final</span> <span class="type">DeviceState</span> state = <span class="kw">new</span> DeviceState(DEVICE_ID);
+    <span class="kw">private</span> <span class="type">Instant</span> simTime = Instant.<span class="fn">now</span>();
+    <span class="kw">private int</span> tickCount = <span class="num">0</span>;
+    <span class="kw">private volatile boolean</span> manualOverride = <span class="kw">false</span>;
+
+    <span class="kw">public</span> <span class="type">EventGenerator</span>(<span class="type">WeatherClient</span> weather) {
+        <span class="kw">this</span>.weather = weather;
+        <span class="cmt">// Seed realistic state — Snyder has been running all day</span>
+        state.<span class="fn">setThermostatMode</span>(<span class="str">"COOL"</span>);
+        state.<span class="fn">setTargetSetpoint</span>(<span class="num">74</span>);
+        state.<span class="fn">setIndoorTemp</span>(<span class="num">75.2</span>);
+        state.<span class="fn">setOutdoorTemp</span>(weather.<span class="fn">getOutdoorTemp</span>());
+        state.<span class="fn">setCoolerRunning</span>(<span class="kw">true</span>);
+        state.<span class="fn">setCoolerRuntimeToday</span>(<span class="num">9000</span>);         <span class="cmt">// 2.5h cooling today</span>
+        state.<span class="fn">setAuxHeaterCyclesToday</span>(<span class="num">2</span>);           <span class="cmt">// aux kicked in twice</span>
+        state.<span class="fn">setTotalHvacRuntimeHours</span>(<span class="num">200</span>);        <span class="cmt">// filter getting old</span>
+        tickCount = <span class="num">453</span>;                            <span class="cmt">// near a DR event</span>
+    }
+
+    <span class="cmt">/** Advance simulation by one tick (~5 simulated minutes) */</span>
+    <span class="kw">public</span> <span class="type">List</span>&lt;<span class="type">ThermostatEvent</span>&gt; <span class="fn">tick</span>() {
+        <span class="type">List</span>&lt;<span class="type">ThermostatEvent</span>&gt; events = <span class="kw">new</span> ArrayList&lt;&gt;();
+        tickCount++;
+        simTime = simTime.<span class="fn">plusSeconds</span>(<span class="num">300</span>); <span class="cmt">// 5 min per tick</span>
+
+        <span class="cmt">// Use real outdoor temp from Bangalore weather</span>
+        state.<span class="fn">setOutdoorTemp</span>(weather.<span class="fn">getOutdoorTemp</span>());
+
+        <span class="cmt">// HVAC physics: drift indoor temp toward outdoor</span>
+        <span class="kw">double</span> tempDelta = state.<span class="fn">getOutdoorTemp</span>() - state.<span class="fn">getIndoorTemp</span>();
+        state.<span class="fn">setIndoorTemp</span>(state.<span class="fn">getIndoorTemp</span>() + tempDelta * DRIFT_RATE);
+
+        <span class="cmt">// Thermostat control logic</span>
+        <span class="type">String</span> mode = state.<span class="fn">getThermostatMode</span>();
+        <span class="kw">double</span> target = state.<span class="fn">getTargetSetpoint</span>();
+
+        <span class="kw">if</span> (<span class="str">"COOL"</span>.<span class="fn">equals</span>(mode)) {
+            <span class="cmt">// Start cooler, accumulate runtime, pull temp down</span>
+            state.<span class="fn">setCoolerRuntimeToday</span>(state.<span class="fn">getCoolerRuntimeToday</span>() + <span class="num">2</span>);
+            <span class="kw">if</span> (state.<span class="fn">getIndoorTemp</span>() > target) {
+                state.<span class="fn">setIndoorTemp</span>(state.<span class="fn">getIndoorTemp</span>() - COOLING_RATE * <span class="num">5</span>);
+            }
+        } <span class="kw">else if</span> (<span class="str">"HEAT"</span>.<span class="fn">equals</span>(mode)) {
+            <span class="cmt">// Primary heater with aux heater fallback</span>
+            <span class="kw">if</span> (state.<span class="fn">getIndoorTemp</span>() &lt; target - <span class="num">1.0</span>) {
+                <span class="kw">double</span> rate = HEATING_RATE;
+                <span class="cmt">// Aux heater kicks in when outdoor &lt; 40°F</span>
+                <span class="kw">if</span> (state.<span class="fn">getOutdoorTemp</span>() &lt; <span class="num">40</span>) {
+                    state.<span class="fn">setAuxHeaterRunning</span>(<span class="kw">true</span>);
+                    state.<span class="fn">setAuxHeaterCyclesToday</span>(
+                        state.<span class="fn">getAuxHeaterCyclesToday</span>() + <span class="num">1</span>);
+                    rate = AUX_HEATING_RATE;
+                }
+                state.<span class="fn">setIndoorTemp</span>(state.<span class="fn">getIndoorTemp</span>() + rate * <span class="num">5</span>);
+            }
+        }
+
+        <span class="cmt">// Always emit temperature reading</span>
+        events.<span class="fn">add</span>(<span class="fn">tempEvent</span>());
+
+        <span class="cmt">// DR events: 3-4 per week, 5-state lifecycle</span>
+        <span class="kw">int</span> dayTick = tickCount % <span class="num">288</span>;  <span class="cmt">// 288 ticks = 24h</span>
+        <span class="kw">int</span> weekDay = (tickCount / <span class="num">288</span>) % <span class="num">7</span>;
+
+        <span class="kw">if</span> (drDay &amp;&amp; dayTick == <span class="num">162</span>) {  <span class="cmt">// 1:30 PM: schedule</span>
+            state.<span class="fn">setDrStatus</span>(<span class="str">"SCHEDULED"</span>);
+        } <span class="kw">else if</span> (drDay &amp;&amp; dayTick == <span class="num">171</span>) {  <span class="cmt">// 1:45 PM: pre-cool</span>
+            state.<span class="fn">setDrStatus</span>(<span class="str">"PRE_COOLING"</span>);
+            state.<span class="fn">setTargetSetpoint</span>(target - <span class="num">2</span>);
+        } <span class="kw">else if</span> (drDay &amp;&amp; dayTick == <span class="num">180</span>) {  <span class="cmt">// 3 PM: active</span>
+            state.<span class="fn">setDrStatus</span>(<span class="str">"ACTIVE"</span>);
+            state.<span class="fn">setTargetSetpoint</span>(target + <span class="num">4</span>);
+        } <span class="kw">else if</span> (drDay &amp;&amp; dayTick == <span class="num">204</span>) {  <span class="cmt">// 5 PM: recovery</span>
+            state.<span class="fn">setDrStatus</span>(<span class="str">"RECOVERY"</span>);
+        } <span class="kw">else if</span> (drDay &amp;&amp; dayTick == <span class="num">210</span>) {  <span class="cmt">// 5:30 PM: done</span>
+            state.<span class="fn">setDrStatus</span>(<span class="str">"NONE"</span>);
+        }
+
+        <span class="cmt">// Energy Star V2 score calculation</span>
+        <span class="kw">int</span> score = <span class="num">85</span>;
+        <span class="kw">if</span> (coolerH > <span class="num">8</span>) score -= <span class="num">10</span>;        <span class="cmt">// excessive cooling</span>
+        <span class="kw">if</span> (auxH > <span class="num">0.5</span>) score -= <span class="num">8</span>;          <span class="cmt">// aux heater overuse</span>
+        <span class="kw">if</span> (filterH > <span class="num">300</span>) score -= <span class="num">5</span>;       <span class="cmt">// dirty filter</span>
+        <span class="kw">if</span> (drActive) score += <span class="num">5</span>;            <span class="cmt">// DR participation bonus</span>
+        <span class="kw">if</span> (!manualOverride) score += <span class="num">3</span>;    <span class="cmt">// AI optimization bonus</span>
+        state.<span class="fn">setEnergyStarScore</span>(Math.<span class="fn">max</span>(<span class="num">0</span>, Math.<span class="fn">min</span>(<span class="num">100</span>, score)));
+
+        <span class="kw">return</span> events;
+    }
+}</pre></div>
+        </div>
+
+        <!-- AnomalyEngine -->
+        <h3 class="mt-4 mb-2">7.2 AnomalyEngine — Real-Time Detection</h3>
+        <p class="text-muted mb-2">
+            Evaluates device state on every tick and creates anomaly objects when conditions match.
+            Uses deduplication to avoid flooding the user with repeated alerts.
+        </p>
+
+        <div class="code-block">
+            <div class="code-header">
+                <span class="code-filename">src/main/java/com/amazon/energyadvisor/engine/AnomalyEngine.java</span>
+                <span class="code-lang">Java</span>
+            </div>
+            <div class="code-body"><pre><span class="ann">@Component</span>
+<span class="kw">public class</span> <span class="type">AnomalyEngine</span> {
+
+    <span class="kw">private final</span> <span class="type">List</span>&lt;<span class="type">Anomaly</span>&gt; activeAnomalies = <span class="kw">new</span> CopyOnWriteArrayList&lt;&gt;();
+
+    <span class="cmt">/** Evaluate device state and return any new anomalies */</span>
+    <span class="kw">public</span> <span class="type">List</span>&lt;<span class="type">Anomaly</span>&gt; <span class="fn">evaluate</span>(<span class="type">DeviceState</span> state) {
+        <span class="type">List</span>&lt;<span class="type">Anomaly</span>&gt; newAnomalies = <span class="kw">new</span> ArrayList&lt;&gt;();
+
+        <span class="cmt">// Pillar 1: Aux heater overuse</span>
+        <span class="kw">if</span> (state.<span class="fn">getAuxHeaterCyclesToday</span>() >= <span class="num">3</span>
+                &amp;&amp; state.<span class="fn">getOutdoorTemp</span>() > <span class="num">45</span>) {
+            <span class="kw">if</span> (<span class="fn">noActiveAnomaly</span>(state.<span class="fn">getDeviceId</span>(),
+                    Category.AUX_HEATER_OVERUSE)) {
+                <span class="type">Anomaly</span> a = <span class="kw">new</span> Anomaly(
+                    state.<span class="fn">getDeviceId</span>(),
+                    Category.AUX_HEATER_OVERUSE,
+                    Severity.WARNING,
+                    <span class="str">"Auxiliary heater has run 3+ times at mild temps"</span>,
+                    <span class="str">"Replace air filter — could save $15-20/month"</span>);
+                activeAnomalies.<span class="fn">add</span>(a);
+                newAnomalies.<span class="fn">add</span>(a);
+            }
+        }
+
+        <span class="cmt">// Pillar 1: Filter degradation</span>
+        <span class="kw">if</span> (state.<span class="fn">getTotalHvacRuntimeHours</span>() > <span class="num">450</span>
+                &amp;&amp; state.<span class="fn">getAuxHeaterCyclesToday</span>() >= <span class="num">2</span>) {
+            <span class="kw">if</span> (<span class="fn">noActiveAnomaly</span>(state.<span class="fn">getDeviceId</span>(),
+                    Category.FILTER_DEGRADATION)) {
+                <span class="cmt">// Alert: filter needs replacement</span>
+            }
+        }
+
+        <span class="cmt">// Pillar 2: Runtime spike</span>
+        <span class="kw">if</span> (state.<span class="fn">getCoolerRuntimeToday</span>() > <span class="num">6</span> * <span class="num">3600</span>
+                &amp;&amp; state.<span class="fn">getOutdoorTemp</span>() &lt; <span class="num">90</span>) {
+            <span class="cmt">// Alert: cooler running excessively</span>
+        }
+
+        <span class="cmt">// Pillar 3: DR preparation</span>
+        <span class="kw">if</span> (<span class="str">"SCHEDULED"</span>.<span class="fn">equals</span>(state.<span class="fn">getDrStatus</span>())) {
+            <span class="cmt">// Alert: pre-cool recommendation</span>
+        }
+
+        <span class="cmt">// Connectivity loss</span>
+        <span class="kw">if</span> (!state.<span class="fn">isOnline</span>()) {
+            <span class="cmt">// CRITICAL alert: device offline</span>
+        }
+
+        <span class="kw">return</span> newAnomalies;
+    }
+
+    <span class="cmt">// Deduplication: only one active anomaly per category per device</span>
+    <span class="kw">private boolean</span> <span class="fn">noActiveAnomaly</span>(<span class="type">String</span> deviceId, <span class="type">Category</span> cat) {
+        <span class="kw">return</span> activeAnomalies.<span class="fn">stream</span>()
+            .<span class="fn">noneMatch</span>(a -> a.<span class="fn">getDeviceId</span>().<span class="fn">equals</span>(deviceId)
+                &amp;&amp; a.<span class="fn">getCategory</span>() == cat
+                &amp;&amp; !a.<span class="fn">isAcknowledged</span>());
+    }
+}</pre></div>
+        </div>
+
+        <!-- EventStore -->
+        <h3 class="mt-4 mb-2">7.3 EventStore — H2 Persistence</h3>
+        <p class="text-muted mb-2">
+            Persists thermostat events in an H2 in-memory database. Creates the schema on startup
+            and provides query methods for recent events, events by type, and event counts.
+        </p>
+
+        <div class="code-block">
+            <div class="code-header">
+                <span class="code-filename">src/main/java/com/amazon/energyadvisor/store/EventStore.java</span>
+                <span class="code-lang">Java</span>
+            </div>
+            <div class="code-body"><pre><span class="ann">@Repository</span>
+<span class="kw">public class</span> <span class="type">EventStore</span> {
+
+    <span class="kw">private final</span> <span class="type">JdbcTemplate</span> jdbc;
+
+    <span class="ann">@PostConstruct</span>
+    <span class="kw">public void</span> <span class="fn">init</span>() {
+        jdbc.<span class="fn">execute</span>(<span class="str">"""
+            CREATE TABLE IF NOT EXISTS events (
+                id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                device_id VARCHAR(64),
+                event_type VARCHAR(32),
+                event_value VARCHAR(256),
+                numeric_value DOUBLE,
+                ts TIMESTAMP
+            )
+        """</span>);
+        jdbc.<span class="fn">execute</span>(<span class="str">"CREATE INDEX IF NOT EXISTS idx_device_ts "</span>
+            + <span class="str">"ON events(device_id, ts)"</span>);
+    }
+
+    <span class="kw">public void</span> <span class="fn">save</span>(<span class="type">ThermostatEvent</span> event) {
+        jdbc.<span class="fn">update</span>(
+            <span class="str">"INSERT INTO events "</span>
+            + <span class="str">"(device_id, event_type, event_value, numeric_value, ts) "</span>
+            + <span class="str">"VALUES (?,?,?,?,?)"</span>,
+            event.<span class="fn">getDeviceId</span>(),
+            event.<span class="fn">getEventType</span>().<span class="fn">name</span>(),
+            event.<span class="fn">getValue</span>(),
+            event.<span class="fn">getNumericValue</span>(),
+            Timestamp.<span class="fn">from</span>(event.<span class="fn">getTimestamp</span>()));
+    }
+
+    <span class="kw">public void</span> <span class="fn">saveAll</span>(<span class="type">List</span>&lt;<span class="type">ThermostatEvent</span>&gt; events) {
+        events.<span class="fn">forEach</span>(<span class="kw">this</span>::save);
+    }
+
+    <span class="kw">public</span> <span class="type">List</span>&lt;<span class="type">Map</span>&lt;<span class="type">String</span>, <span class="type">Object</span>&gt;&gt; <span class="fn">getRecentEvents</span>(
+            <span class="type">String</span> deviceId, <span class="kw">int</span> limit) {
+        <span class="kw">return</span> jdbc.<span class="fn">queryForList</span>(
+            <span class="str">"SELECT event_type, event_value, numeric_value, ts "</span>
+            + <span class="str">"FROM events WHERE device_id = ? "</span>
+            + <span class="str">"ORDER BY ts DESC LIMIT ?"</span>,
+            deviceId, limit);
+    }
+}</pre></div>
+        </div>
+
+        <!-- WeatherClient -->
+        <h3 class="mt-4 mb-2">7.4 WeatherClient — Live Weather Data</h3>
+        <p class="text-muted mb-2">
+            Fetches real weather data from the Open-Meteo API for Bangalore, India. Caches results
+            for 10 minutes. Provides current conditions, 6-hour forecast, and temperature trend.
+        </p>
+
+        <div class="code-block">
+            <div class="code-header">
+                <span class="code-filename">src/main/java/com/amazon/energyadvisor/weather/WeatherClient.java</span>
+                <span class="code-lang">Java</span>
+            </div>
+            <div class="code-body"><pre><span class="ann">@Component</span>
+<span class="kw">public class</span> <span class="type">WeatherClient</span> {
+
+    <span class="kw">private final</span> <span class="type">HttpClient</span> http = HttpClient.<span class="fn">newHttpClient</span>();
+    <span class="kw">private final</span> <span class="type">ObjectMapper</span> mapper = <span class="kw">new</span> ObjectMapper();
+
+    <span class="ann">@Value</span>(<span class="str">"${weather.default-lat:12.9716}"</span>)
+    <span class="kw">private</span> <span class="type">String</span> lat;
+
+    <span class="ann">@Value</span>(<span class="str">"${weather.default-lon:77.5946}"</span>)
+    <span class="kw">private</span> <span class="type">String</span> lon;
+
+    <span class="kw">private double</span> cachedTempF = Double.NaN;
+    <span class="kw">private</span> <span class="type">String</span> cachedSummary = <span class="str">""</span>;
+    <span class="kw">private</span> <span class="type">String</span> cachedForecast = <span class="str">""</span>;
+    <span class="kw">private</span> <span class="type">String</span> cachedTrend = <span class="str">"STABLE"</span>;
+    <span class="kw">private long</span> cachedAt = <span class="num">0</span>;
+
+    <span class="kw">private void</span> <span class="fn">refreshIfStale</span>() {
+        <span class="kw">if</span> (System.<span class="fn">currentTimeMillis</span>() - cachedAt &lt; <span class="num">600_000</span>) <span class="kw">return</span>;
+        <span class="kw">try</span> {
+            <span class="type">String</span> url = String.<span class="fn">format</span>(
+                <span class="str">"https://api.open-meteo.com/v1/forecast?"</span>
+                + <span class="str">"latitude=%s&amp;longitude=%s"</span>
+                + <span class="str">"&amp;current=temperature_2m,relative_humidity_2m,"</span>
+                + <span class="str">"weather_code,wind_speed_10m,apparent_temperature"</span>
+                + <span class="str">"&amp;hourly=temperature_2m,weather_code"</span>
+                + <span class="str">"&amp;forecast_hours=6"</span>
+                + <span class="str">"&amp;temperature_unit=fahrenheit"</span>, lat, lon);
+
+            <span class="type">HttpResponse</span>&lt;<span class="type">String</span>&gt; resp = http.<span class="fn">send</span>(
+                HttpRequest.<span class="fn">newBuilder</span>().<span class="fn">uri</span>(URI.<span class="fn">create</span>(url)).<span class="fn">GET</span>().<span class="fn">build</span>(),
+                HttpResponse.BodyHandlers.<span class="fn">ofString</span>());
+
+            <span class="type">JsonNode</span> root = mapper.<span class="fn">readTree</span>(resp.<span class="fn">body</span>());
+            <span class="type">JsonNode</span> current = root.<span class="fn">path</span>(<span class="str">"current"</span>);
+
+            cachedTempF = current.<span class="fn">path</span>(<span class="str">"temperature_2m"</span>).<span class="fn">asDouble</span>(<span class="num">85.0</span>);
+            <span class="kw">double</span> humidity = current.<span class="fn">path</span>(<span class="str">"relative_humidity_2m"</span>).<span class="fn">asDouble</span>();
+            <span class="kw">double</span> feelsLike = current.<span class="fn">path</span>(<span class="str">"apparent_temperature"</span>).<span class="fn">asDouble</span>();
+
+            cachedSummary = String.<span class="fn">format</span>(
+                <span class="str">"%.0f°F (feels like %.0f°F), humidity %.0f%%"</span>,
+                cachedTempF, feelsLike, humidity);
+
+            <span class="cmt">// Compute trend from 3-hour lookahead</span>
+            <span class="type">JsonNode</span> hourlyTemps = root.<span class="fn">path</span>(<span class="str">"hourly"</span>)
+                .<span class="fn">path</span>(<span class="str">"temperature_2m"</span>);
+            <span class="kw">if</span> (hourlyTemps.<span class="fn">size</span>() >= <span class="num">3</span>) {
+                <span class="kw">double</span> later = hourlyTemps.<span class="fn">get</span>(<span class="num">2</span>).<span class="fn">asDouble</span>();
+                <span class="kw">if</span> (later > cachedTempF + <span class="num">3</span>) cachedTrend = <span class="str">"RISING"</span>;
+                <span class="kw">else if</span> (later &lt; cachedTempF - <span class="num">3</span>) cachedTrend = <span class="str">"FALLING"</span>;
+                <span class="kw">else</span> cachedTrend = <span class="str">"STABLE"</span>;
+            }
+
+            cachedAt = System.<span class="fn">currentTimeMillis</span>();
+        } <span class="kw">catch</span> (<span class="type">Exception</span> e) {
+            log.<span class="fn">warn</span>(<span class="str">"Open-Meteo API failed: {}"</span>, e.<span class="fn">getMessage</span>());
+        }
+    }
+}</pre></div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ================================================================
+     SECTION 8: API REFERENCE
+     ================================================================ -->
+<section id="api-reference">
+    <div class="container">
+        <div class="section-header">
+            <div class="section-number">8</div>
+            <h2>REST API Reference</h2>
+            <p>All 12 endpoints exposed by the AdvisorController</p>
+        </div>
+
+        <h3 class="mb-2">Chat &amp; AI Endpoints</h3>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr><th>Method</th><th>Endpoint</th><th>Description</th><th>Request Body</th><th>Response</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="badge badge-green">POST</span></td>
+                        <td><span class="inline-code">/api/chat</span></td>
+                        <td>Chat with AI advisor (full device context)</td>
+                        <td><span class="inline-code">{"message": "...", "deviceId": "..."}</span></td>
+                        <td><span class="inline-code">{"response": "...", "proactive": false}</span></td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge badge-green">POST</span></td>
+                        <td><span class="inline-code">/api/chatbot</span></td>
+                        <td>Direct Bedrock chat (no device context)</td>
+                        <td><span class="inline-code">{"message": "..."}</span></td>
+                        <td><span class="inline-code">{"response": "...", "proactive": false}</span></td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge badge-green">POST</span></td>
+                        <td><span class="inline-code">/api/optimize</span></td>
+                        <td>Run AI thermostat optimization</td>
+                        <td>None</td>
+                        <td><span class="inline-code">{"applied": true, "mode": "COOL", "setpoint": 76, "reason": "..."}</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h3 class="mt-4 mb-2">Device State &amp; Events</h3>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr><th>Method</th><th>Endpoint</th><th>Description</th><th>Parameters</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="badge badge-blue">GET</span></td>
+                        <td><span class="inline-code">/api/state</span></td>
+                        <td>Current thermostat state</td>
+                        <td>None</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge badge-blue">GET</span></td>
+                        <td><span class="inline-code">/api/events</span></td>
+                        <td>Recent thermostat events</td>
+                        <td><span class="inline-code">?limit=100</span></td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge badge-blue">GET</span></td>
+                        <td><span class="inline-code">/api/anomalies</span></td>
+                        <td>Active anomalies</td>
+                        <td>None</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge badge-blue">GET</span></td>
+                        <td><span class="inline-code">/api/alerts</span></td>
+                        <td>Proactive alerts (clears after read)</td>
+                        <td>None</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge badge-blue">GET</span></td>
+                        <td><span class="inline-code">/api/weather</span></td>
+                        <td>Current weather data</td>
+                        <td>None</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge badge-blue">GET</span></td>
+                        <td><span class="inline-code">/api/cost</span></td>
+                        <td>Today's energy cost breakdown</td>
+                        <td>None</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge badge-blue">GET</span></td>
+                        <td><span class="inline-code">/api/savings</span></td>
+                        <td>Monthly savings analysis</td>
+                        <td>None</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h3 class="mt-4 mb-2">Simulation Control</h3>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr><th>Method</th><th>Endpoint</th><th>Description</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="badge badge-green">POST</span></td>
+                        <td><span class="inline-code">/api/simulation/start</span></td>
+                        <td>Start the HVAC simulation</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge badge-green">POST</span></td>
+                        <td><span class="inline-code">/api/simulation/stop</span></td>
+                        <td>Pause the simulation</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge badge-green">POST</span></td>
+                        <td><span class="inline-code">/api/simulation/reset</span></td>
+                        <td>Reset simulation to initial state</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h3 class="mt-4 mb-2">Manual Override &amp; Patterns</h3>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr><th>Method</th><th>Endpoint</th><th>Description</th><th>Request Body</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="badge badge-green">POST</span></td>
+                        <td><span class="inline-code">/api/override</span></td>
+                        <td>Manual thermostat override (pauses AI)</td>
+                        <td><span class="inline-code">{"mode": "COOL", "setpoint": 72}</span></td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge badge-green">POST</span></td>
+                        <td><span class="inline-code">/api/override/resume</span></td>
+                        <td>Resume AI optimization</td>
+                        <td>None</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge badge-blue">GET</span></td>
+                        <td><span class="inline-code">/api/patterns</span></td>
+                        <td>User override patterns</td>
+                        <td>None</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge badge-blue">GET</span></td>
+                        <td><span class="inline-code">/api/patterns/insights</span></td>
+                        <td>AI analysis of user preferences</td>
+                        <td>None</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h3 class="mt-4 mb-2">Example: Chat Request</h3>
+        <div class="code-block">
+            <div class="code-header">
+                <span class="code-filename">curl example</span>
+                <span class="code-lang">bash</span>
+            </div>
+            <div class="code-body"><pre><span class="cmt"># Ask the AI advisor about energy usage</span>
+curl -X POST http://localhost:<span class="num">9090</span>/api/chat \
+  -H <span class="str">"Content-Type: application/json"</span> \
+  -d <span class="str">'{"message": "Why is my energy bill high?", "deviceId": "snyder-demo-001"}'</span>
+
+<span class="cmt"># Response:</span>
+<span class="cmt"># {</span>
+<span class="cmt">#   "response": "Your AC has been running about 3 hours today because it's</span>
+<span class="cmt">#     85°F outside in Bangalore. That's costing roughly $1.70 so far — on</span>
+<span class="cmt">#     track for about $50 this month. Your backup heater also kicked in</span>
+<span class="cmt">#     twice, which adds up fast at $2.40/hour. Try raising your target</span>
+<span class="cmt">#     temperature by 2°F to save about $8-10 this month.",</span>
+<span class="cmt">#   "timestamp": "2026-05-04T07:30:00Z",</span>
+<span class="cmt">#   "proactive": false</span>
+<span class="cmt"># }</span></pre></div>
+        </div>
+
+        <h3 class="mt-4 mb-2">Example: AI Optimization</h3>
+        <div class="code-block">
+            <div class="code-header">
+                <span class="code-filename">curl example</span>
+                <span class="code-lang">bash</span>
+            </div>
+            <div class="code-body"><pre><span class="cmt"># Trigger AI optimization</span>
+curl -X POST http://localhost:<span class="num">9090</span>/api/optimize
+
+<span class="cmt"># Response when change is applied:</span>
+<span class="cmt"># {</span>
+<span class="cmt">#   "applied": true,</span>
+<span class="cmt">#   "mode": "COOL",</span>
+<span class="cmt">#   "setpoint": "76.0",</span>
+<span class="cmt">#   "reason": "Temperature is stable and outdoor is cooling down.</span>
+<span class="cmt">#     Raising setpoint 2°F to save energy.",</span>
+<span class="cmt">#   "previousMode": "COOL",</span>
+<span class="cmt">#   "previousSetpoint": 74.0</span>
+<span class="cmt"># }</span>
+
+<span class="cmt"># Response when no change needed:</span>
+<span class="cmt"># {</span>
+<span class="cmt">#   "applied": false,</span>
+<span class="cmt">#   "mode": "null",</span>
+<span class="cmt">#   "setpoint": "null",</span>
+<span class="cmt">#   "reason": "No change needed — indoor temp is comfortable</span>
+<span class="cmt">#     and weather is stable."</span>
+<span class="cmt"># }</span></pre></div>
+        </div>
+
+        <h3 class="mt-4 mb-2">Example: Manual Override</h3>
+        <div class="code-block">
+            <div class="code-header">
+                <span class="code-filename">curl example</span>
+                <span class="code-lang">bash</span>
+            </div>
+            <div class="code-body"><pre><span class="cmt"># Override thermostat to HEAT at 70°F</span>
+curl -X POST http://localhost:<span class="num">9090</span>/api/override \
+  -H <span class="str">"Content-Type: application/json"</span> \
+  -d <span class="str">'{"mode": "HEAT", "setpoint": 70}'</span>
+
+<span class="cmt"># Response:</span>
+<span class="cmt"># {</span>
+<span class="cmt">#   "applied": true,</span>
+<span class="cmt">#   "mode": "HEAT",</span>
+<span class="cmt">#   "setpoint": 70.0,</span>
+<span class="cmt">#   "manualOverride": true,</span>
+<span class="cmt">#   "message": "Manual override active. AI optimization paused."</span>
+<span class="cmt"># }</span>
+
+<span class="cmt"># Resume AI control</span>
+curl -X POST http://localhost:<span class="num">9090</span>/api/override/resume
+<span class="cmt"># {"status": "AI optimization resumed"}</span></pre></div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ================================================================
+     SECTION 9: FRONTEND
+     ================================================================ -->
+<section id="frontend">
+    <div class="container">
+        <div class="section-header">
+            <div class="section-number">9</div>
+            <h2>Frontend Architecture</h2>
+            <p>The dashboard and chatbot UI — built with vanilla JS, no framework</p>
+        </div>
+
+        <h3 class="mb-2">Two Pages</h3>
+        <div class="card-grid">
+            <div class="card">
+                <div class="card-icon">📊</div>
+                <h3>index.html — Main Dashboard</h3>
+                <p>
+                    A two-column layout: sidebar with device state, runtime bars, cost panel,
+                    manual override controls, notifications, and routines. Main area is the
+                    AI chat interface with suggestion buttons and proactive alerts.
+                </p>
+                <ul class="pillar-features mt-2">
+                    <li>Temperature ring with SVG animation</li>
+                    <li>Mode badge with color coding (COOL=blue, HEAT=red)</li>
+                    <li>4 stat cards: outdoor temp, DR status, Energy Star, filter hours</li>
+                    <li>HVAC component status with running/idle indicators</li>
+                    <li>Runtime bars with gradient fills</li>
+                    <li>Collapsible sections: cost, override, notifications, routines</li>
+                    <li>15 suggestion buttons for common questions</li>
+                    <li>AI Optimize button in header</li>
+                </ul>
+            </div>
+            <div class="card">
+                <div class="card-icon">💬</div>
+                <h3>chatbot.html — Standalone Chatbot</h3>
+                <p>
+                    A focused chat interface that talks directly to Bedrock without simulation
+                    context. Uses the <span class="inline-code">/api/chatbot</span> endpoint.
+                    Simpler UI with 8 suggestion buttons for general energy questions.
+                </p>
+                <ul class="pillar-features mt-2">
+                    <li>Purple gradient theme (distinct from dashboard)</li>
+                    <li>Self-contained — all CSS inline</li>
+                    <li>Back link to main dashboard</li>
+                    <li>Typing indicator with animated dots</li>
+                </ul>
+            </div>
+        </div>
+
+        <h3 class="mt-4 mb-2">Polling Architecture</h3>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr><th>Poll Target</th><th>Interval</th><th>Endpoint</th><th>Purpose</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Device State</td>
+                        <td>1.5 seconds</td>
+                        <td><span class="inline-code">/api/state</span></td>
+                        <td>Update all dashboard values — temp, mode, components, runtime</td>
+                    </tr>
+                    <tr>
+                        <td>Proactive Alerts</td>
+                        <td>3 seconds</td>
+                        <td><span class="inline-code">/api/alerts</span></td>
+                        <td>Show new anomaly alerts and AI adjustments in chat</td>
+                    </tr>
+                    <tr>
+                        <td>Cost Data</td>
+                        <td>5 seconds</td>
+                        <td><span class="inline-code">/api/cost</span></td>
+                        <td>Update cost panel with today's breakdown</td>
+                    </tr>
+                    <tr>
+                        <td>Weather</td>
+                        <td>30 seconds</td>
+                        <td><span class="inline-code">/api/weather</span></td>
+                        <td>Update weather trend indicator</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h3 class="mt-4 mb-2">Dashboard JavaScript (app.js)</h3>
+        <p class="text-muted mb-2">
+            The frontend is ~250 lines of vanilla JavaScript. Key functions:
+        </p>
+
+        <div class="code-block">
+            <div class="code-header">
+                <span class="code-filename">src/main/resources/static/app.js (key functions)</span>
+                <span class="code-lang">JavaScript</span>
+            </div>
+            <div class="code-body"><pre><span class="cmt">// Send chat message to AI advisor</span>
+<span class="kw">async function</span> <span class="fn">sendMessage</span>() {
+    <span class="kw">const</span> input = document.<span class="fn">getElementById</span>(<span class="str">'user-input'</span>);
+    <span class="kw">const</span> msg = input.value.<span class="fn">trim</span>();
+    <span class="kw">if</span> (!msg) <span class="kw">return</span>;
+    input.value = <span class="str">''</span>;
+    <span class="fn">appendMsg</span>(<span class="str">'user'</span>, msg);
+    <span class="fn">appendTyping</span>();
+    <span class="kw">const</span> res = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">'/api/chat'</span>, {
+        method: <span class="str">'POST'</span>,
+        headers: {<span class="str">'Content-Type'</span>: <span class="str">'application/json'</span>},
+        body: JSON.<span class="fn">stringify</span>({message: msg, deviceId: <span class="str">'snyder-demo-001'</span>})
+    });
+    <span class="kw">const</span> data = <span class="kw">await</span> res.<span class="fn">json</span>();
+    <span class="fn">removeTyping</span>();
+    <span class="fn">appendMsg</span>(<span class="str">'advisor'</span>, data.response);
+}
+
+<span class="cmt">// Poll device state every 1.5 seconds</span>
+<span class="kw">async function</span> <span class="fn">pollState</span>() {
+    <span class="kw">const</span> res = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">'/api/state'</span>);
+    <span class="kw">const</span> s = <span class="kw">await</span> res.<span class="fn">json</span>();
+
+    <span class="cmt">// Update temperature display</span>
+    document.<span class="fn">getElementById</span>(<span class="str">'indoor-temp'</span>).textContent =
+        s.indoorTemp.<span class="fn">toFixed</span>(<span class="num">1</span>);
+
+    <span class="cmt">// Update mode badge with color</span>
+    <span class="kw">const</span> badge = document.<span class="fn">getElementById</span>(<span class="str">'mode-badge'</span>);
+    badge.textContent = s.thermostatMode;
+    badge.className = <span class="str">'mode-badge '</span> + s.thermostatMode.<span class="fn">toLowerCase</span>();
+
+    <span class="cmt">// Update runtime bars</span>
+    <span class="kw">const</span> coolerH = s.coolerRuntimeToday / <span class="num">3600</span>;
+    document.<span class="fn">getElementById</span>(<span class="str">'bar-cooler'</span>).style.width =
+        Math.<span class="fn">min</span>(coolerH / <span class="num">8</span> * <span class="num">100</span>, <span class="num">100</span>) + <span class="str">'%'</span>;
+
+    <span class="cmt">// Update temperature ring SVG</span>
+    <span class="kw">const</span> pct = Math.<span class="fn">max</span>(<span class="num">0</span>, Math.<span class="fn">min</span>(<span class="num">1</span>,
+        (s.indoorTemp - <span class="num">60</span>) / <span class="num">40</span>));
+    ring.style.strokeDashoffset = <span class="num">327</span> - (<span class="num">327</span> * pct);
+}
+
+<span class="cmt">// Manual override — pause AI, set user preference</span>
+<span class="kw">async function</span> <span class="fn">manualOverride</span>() {
+    <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">'/api/override'</span>, {
+        method: <span class="str">'POST'</span>,
+        headers: {<span class="str">'Content-Type'</span>: <span class="str">'application/json'</span>},
+        body: JSON.<span class="fn">stringify</span>({
+            mode: overrideMode,
+            setpoint: overrideTemp
+        })
+    });
+    <span class="fn">appendMsg</span>(<span class="str">'advisor'</span>,
+        <span class="str">`🔒 Switched to ${overrideMode} at ${overrideTemp}°F. `</span>
+        + <span class="str">`AI paused — tap Resume AI to re-enable.`</span>);
+}
+
+<span class="cmt">// Start polling loops</span>
+<span class="fn">setInterval</span>(pollState, <span class="num">1500</span>);
+<span class="fn">setInterval</span>(pollAlerts, <span class="num">3000</span>);
+<span class="fn">setInterval</span>(pollCost, <span class="num">5000</span>);
+<span class="fn">setInterval</span>(pollWeather, <span class="num">30000</span>);</pre></div>
+        </div>
+
+        <h3 class="mt-4 mb-2">CSS Design System</h3>
+        <p class="text-muted mb-2">
+            The dashboard uses CSS custom properties for a consistent design language.
+            Key design decisions:
+        </p>
+        <ul class="pillar-features">
+            <li><strong>Color palette</strong> — Soft blues and greens for a calm, trustworthy feel. Orange/red for warnings.</li>
+            <li><strong>Gradients</strong> — Used for interactive elements (buttons, badges) to add depth without shadows.</li>
+            <li><strong>Compact sidebar</strong> — 300px fixed width with collapsible sections to fit all controls.</li>
+            <li><strong>Animations</strong> — Pulse animation on running component dots, fade-in on new chat messages, bounce on typing dots.</li>
+            <li><strong>Responsive</strong> — Grid collapses to single column on mobile. Nav links hidden. Cards stack vertically.</li>
+            <li><strong>Temperature ring</strong> — SVG circle with stroke-dashoffset animation. Maps 60-100°F to 0-100% fill.</li>
+        </ul>
+
+        <h3 class="mt-4 mb-2">Dashboard Layout</h3>
+        <div class="code-block">
+            <div class="code-header">
+                <span class="code-filename">Layout structure</span>
+                <span class="code-lang">HTML</span>
+            </div>
+            <div class="code-body"><pre><span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="val">"layout"</span><span class="tag">&gt;</span>                    <span class="cmt">&lt;!-- CSS Grid: 300px | 1fr --&gt;</span>
+    <span class="tag">&lt;aside</span> <span class="attr">class</span>=<span class="val">"sidebar"</span><span class="tag">&gt;</span>
+        <span class="cmt">&lt;!-- Temperature ring with SVG --&gt;</span>
+        <span class="cmt">&lt;!-- Mode badge (COOL/HEAT/OFF) --&gt;</span>
+        <span class="cmt">&lt;!-- 4 stat cards (outdoor, DR, Energy Star, filter) --&gt;</span>
+        <span class="cmt">&lt;!-- HVAC component list with status dots --&gt;</span>
+        <span class="cmt">&lt;!-- Runtime bars (heater, aux, cooler, cycles) --&gt;</span>
+        <span class="cmt">&lt;!-- Collapsible: Today's Cost --&gt;</span>
+        <span class="cmt">&lt;!-- Collapsible: Manual Override --&gt;</span>
+        <span class="cmt">&lt;!-- Collapsible: Notifications --&gt;</span>
+        <span class="cmt">&lt;!-- Collapsible: Routines --&gt;</span>
+        <span class="cmt">&lt;!-- Simulation controls (Start/Stop/Reset) --&gt;</span>
+    <span class="tag">&lt;/aside&gt;</span>
+    <span class="tag">&lt;main</span> <span class="attr">class</span>=<span class="val">"chat-area"</span><span class="tag">&gt;</span>
+        <span class="cmt">&lt;!-- Header with AI Optimize button --&gt;</span>
+        <span class="cmt">&lt;!-- Chat messages (scrollable) --&gt;</span>
+        <span class="cmt">&lt;!-- 15 suggestion buttons --&gt;</span>
+        <span class="cmt">&lt;!-- Text input with send button --&gt;</span>
+    <span class="tag">&lt;/main&gt;</span>
+<span class="tag">&lt;/div&gt;</span></pre></div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ================================================================
+     SECTION 10: GETTING STARTED
+     ================================================================ -->
+<section id="getting-started">
+    <div class="container">
+        <div class="section-header">
+            <div class="section-number">10</div>
+            <h2>Getting Started</h2>
+            <p>How to clone, configure, and run the application</p>
+        </div>
+
+        <h3 class="mb-2">Prerequisites</h3>
+        <div class="table-wrapper">
+            <table>
+                <thead><tr><th>Requirement</th><th>Version</th><th>Required?</th><th>Notes</th></tr></thead>
+                <tbody>
+                    <tr><td>Java JDK</td><td>17+</td><td><span class="badge badge-red">Required</span></td><td>OpenJDK or Amazon Corretto</td></tr>
+                    <tr><td>AWS Credentials</td><td>—</td><td><span class="badge badge-orange">Optional</span></td><td>For Bedrock AI. Set bedrock.enabled=false for mock mode</td></tr>
+                    <tr><td>Internet</td><td>—</td><td><span class="badge badge-orange">Optional</span></td><td>For Open-Meteo weather API. Falls back to 85°F default</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h3 class="mt-4 mb-2">Step-by-Step Setup</h3>
+
+        <div class="flow-step">
+            <div class="flow-num">1</div>
+            <div class="flow-content">
+                <h4>Clone the Repository</h4>
+                <div class="code-block">
+                    <div class="code-header"><span class="code-filename">Terminal</span><span class="code-lang">bash</span></div>
+                    <div class="code-body"><pre>git clone ssh://git.amazon.com/pkg/SmartHomeEnergyAdvisor
+cd SmartHomeEnergyAdvisor</pre></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flow-step">
+            <div class="flow-num">2</div>
+            <div class="flow-content">
+                <h4>Configure Bedrock (Optional)</h4>
+                <p>If you have AWS credentials with Bedrock access, ensure your <span class="inline-code">~/.aws/credentials</span> has a default profile. Otherwise, disable Bedrock:</p>
+                <div class="code-block">
+                    <div class="code-header"><span class="code-filename">src/main/resources/application.yml</span><span class="code-lang">YAML</span></div>
+                    <div class="code-body"><pre><span class="type">bedrock</span>:
+  <span class="prop">enabled</span>: <span class="kw">false</span>   <span class="cmt"># Uses intelligent mock responses</span></pre></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flow-step">
+            <div class="flow-num">3</div>
+            <div class="flow-content">
+                <h4>Run the Application</h4>
+                <div class="code-block">
+                    <div class="code-header"><span class="code-filename">Terminal</span><span class="code-lang">bash</span></div>
+                    <div class="code-body"><pre>./gradlew bootRun</pre></div>
+                </div>
+                <p class="mt-1">The app starts on <strong>http://localhost:9090</strong>. The H2 console is at <strong>http://localhost:9090/h2</strong>.</p>
+            </div>
+        </div>
+
+        <div class="flow-step">
+            <div class="flow-num">4</div>
+            <div class="flow-content">
+                <h4>Use the Dashboard</h4>
+                <p>Open <strong>http://localhost:9090</strong> in your browser.</p>
+                <ul class="pillar-features mt-1">
+                    <li>Click <strong>▶ Start</strong> to begin the thermostat simulation</li>
+                    <li>Watch the dashboard update every 1.5 seconds</li>
+                    <li>Ask questions in the chatbot or click suggestion buttons</li>
+                    <li>Wait for proactive alerts when anomalies are detected</li>
+                    <li>Try the manual override to teach the AI your preferences</li>
+                    <li>Click <strong>🤖 AI Optimize</strong> to trigger on-demand optimization</li>
+                </ul>
+            </div>
+        </div>
+
+        <h3 class="mt-4 mb-2">Sample Questions to Ask</h3>
+        <div class="card-grid">
+            <div class="card">
+                <h3>💰 Billing</h3>
+                <ul class="pillar-features">
+                    <li>"Why is my energy bill high?"</li>
+                    <li>"How much is my HVAC costing me today?"</li>
+                    <li>"What temperature should I set for best savings?"</li>
+                    <li>"Compare my usage today vs yesterday"</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h3>🔧 Health</h3>
+                <ul class="pillar-features">
+                    <li>"Is my HVAC system healthy?"</li>
+                    <li>"Why does my aux heater keep running?"</li>
+                    <li>"Do I need to change my air filter?"</li>
+                    <li>"Is my system running efficiently?"</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h3>⚡ Demand Response</h3>
+                <ul class="pillar-features">
+                    <li>"Am I ready for the demand response event?"</li>
+                    <li>"When is the next demand response event?"</li>
+                    <li>"Should I pre-cool before the DR event?"</li>
+                    <li>"How much did I save during the last DR event?"</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ================================================================
+     SECTION 11: ADVISOR CONTROLLER DEEP DIVE
+     ================================================================ -->
+<section id="controller-deep-dive">
+    <div class="container">
+        <div class="section-header">
+            <div class="section-number">11</div>
+            <h2>AdvisorController Deep Dive</h2>
+            <p>The central orchestrator — how all components connect</p>
+        </div>
+
+        <p class="text-muted mb-3">
+            The AdvisorController is the largest class in the project (~250 lines). It wires together
+            the simulator, event store, anomaly engine, weather client, Bedrock client, and prompt builder.
+            It exposes all REST endpoints and runs the three scheduled tasks.
+        </p>
+
+        <h3 class="mb-2">Dependency Injection</h3>
+        <div class="code-block">
+            <div class="code-header"><span class="code-filename">AdvisorController.java — Constructor</span><span class="code-lang">Java</span></div>
+            <div class="code-body"><pre><span class="ann">@RestController</span>
+<span class="ann">@RequestMapping</span>(<span class="str">"/api"</span>)
+<span class="kw">public class</span> <span class="type">AdvisorController</span> {
+
+    <span class="kw">private final</span> <span class="type">EventGenerator</span> simulator;
+    <span class="kw">private final</span> <span class="type">EventStore</span> store;
+    <span class="kw">private final</span> <span class="type">AnomalyEngine</span> anomalyEngine;
+    <span class="kw">private final</span> <span class="type">WeatherClient</span> weather;
+    <span class="kw">private final</span> <span class="type">BedrockClient</span> bedrock;
+    <span class="kw">private final</span> <span class="type">PromptBuilder</span> promptBuilder;
+
+    <span class="cmt">// Thread-safe collections for alerts and patterns</span>
+    <span class="kw">private final</span> <span class="type">List</span>&lt;<span class="type">ChatResponse</span>&gt; proactiveAlerts =
+        <span class="kw">new</span> CopyOnWriteArrayList&lt;&gt;();
+    <span class="kw">private final</span> <span class="type">List</span>&lt;<span class="type">String</span>&gt; userPatterns =
+        <span class="kw">new</span> CopyOnWriteArrayList&lt;&gt;();
+
+    <span class="kw">private boolean</span> simulationRunning = <span class="kw">true</span>;
+    <span class="kw">private boolean</span> manualOverride = <span class="kw">false</span>;
+}</pre></div>
+        </div>
+
+        <h3 class="mt-4 mb-2">Chat Flow</h3>
+        <p class="text-muted mb-2">When a user sends a message, here's what happens:</p>
+        <div class="flow-step">
+            <div class="flow-num">1</div>
+            <div class="flow-content">
+                <h4>Get Current Context</h4>
+                <p>Fetch device state from simulator, last 50 events from H2, and active anomalies from engine.</p>
+            </div>
+        </div>
+        <div class="flow-step">
+            <div class="flow-num">2</div>
+            <div class="flow-content">
+                <h4>Build System Prompt</h4>
+                <p>PromptBuilder injects all context into a structured system prompt with persona instructions.</p>
+            </div>
+        </div>
+        <div class="flow-step">
+            <div class="flow-num">3</div>
+            <div class="flow-content">
+                <h4>Call Bedrock</h4>
+                <p>Send system prompt + user message to Claude. Get back a concise, actionable response.</p>
+            </div>
+        </div>
+        <div class="flow-step">
+            <div class="flow-num">4</div>
+            <div class="flow-content">
+                <h4>Return Response</h4>
+                <p>Wrap in ChatResponse with timestamp and proactive=false flag.</p>
+            </div>
+        </div>
+
+        <h3 class="mt-4 mb-2">Optimization Flow</h3>
+        <p class="text-muted mb-2">The auto-optimize loop (every 60 seconds):</p>
+        <div class="flow-step">
+            <div class="flow-num">1</div>
+            <div class="flow-content">
+                <h4>Build Optimization Prompt</h4>
+                <p>Include state, weather, forecast, trend, anomalies, and learned user patterns.</p>
+            </div>
+        </div>
+        <div class="flow-step">
+            <div class="flow-num">2</div>
+            <div class="flow-content">
+                <h4>Ask Bedrock for JSON</h4>
+                <p>Claude responds with <span class="inline-code">{"mode": "COOL", "setpoint": 76, "reason": "..."}</span></p>
+            </div>
+        </div>
+        <div class="flow-step">
+            <div class="flow-num">3</div>
+            <div class="flow-content">
+                <h4>Parse and Apply</h4>
+                <p>Extract JSON, compare with current state. Only apply if mode or setpoint actually changed.</p>
+            </div>
+        </div>
+        <div class="flow-step">
+            <div class="flow-num">4</div>
+            <div class="flow-content">
+                <h4>Notify User</h4>
+                <p>If applied, add a proactive alert: "🤖 AI Auto-Adjustment: [reason]"</p>
+            </div>
+        </div>
+
+        <h3 class="mt-4 mb-2">User Pattern Learning</h3>
+        <p class="text-muted mb-2">
+            When a user manually overrides the thermostat, the system records the context:
+        </p>
+        <div class="code-block">
+            <div class="code-header"><span class="code-filename">Pattern recording</span><span class="code-lang">Java</span></div>
+            <div class="code-body"><pre><span class="cmt">// Record what the user prefers</span>
+<span class="type">String</span> pattern = String.<span class="fn">format</span>(
+    <span class="str">"User set %s %.0f°F at outdoor=%.0f°F, time=%s"</span>,
+    state.<span class="fn">getThermostatMode</span>(),
+    state.<span class="fn">getTargetSetpoint</span>(),
+    state.<span class="fn">getOutdoorTemp</span>(),
+    LocalTime.<span class="fn">now</span>().<span class="fn">withSecond</span>(<span class="num">0</span>));
+userPatterns.<span class="fn">add</span>(pattern);
+<span class="kw">if</span> (userPatterns.<span class="fn">size</span>() > <span class="num">20</span>) userPatterns.<span class="fn">remove</span>(<span class="num">0</span>);
+
+<span class="cmt">// These patterns are injected into the optimize prompt:</span>
+<span class="cmt">// "USER PREFERENCES (learned from manual overrides):</span>
+<span class="cmt">//  - User set COOL 72°F at outdoor=90°F, time=14:30</span>
+<span class="cmt">//  - User set HEAT 70°F at outdoor=65°F, time=07:00</span>
+<span class="cmt">//  Respect these preferences when making decisions."</span></pre></div>
+        </div>
+
+        <div class="info-box tip">
+            <div class="info-box-title">🧠 Why This Matters</div>
+            <p>
+                Without pattern learning, the AI would optimize purely for energy savings — potentially
+                making the home uncomfortable. By recording overrides, the AI learns that "this user
+                prefers 72°F when it's hot outside" and respects that preference in future optimizations.
+                The <span class="inline-code">/api/patterns/insights</span> endpoint even asks Bedrock
+                to analyze the patterns and explain what it learned.
+            </p>
+        </div>
+    </div>
+</section>
+
+
+<!-- ================================================================
+     SECTION 12: ENERGY STAR & COST MODEL
+     ================================================================ -->
+<section id="energy-model">
+    <div class="container">
+        <div class="section-header">
+            <div class="section-number">12</div>
+            <h2>Energy Star Score &amp; Cost Model</h2>
+            <p>How the app calculates efficiency scores and energy costs</p>
+        </div>
+
+        <h3 class="mb-2">Energy Star V2 Score Calculation</h3>
+        <p class="text-muted mb-2">
+            The Energy Star score is a 0-100 rating calculated on every simulation tick.
+            It starts at a baseline of 85 and adjusts based on runtime efficiency:
+        </p>
+
+        <div class="table-wrapper">
+            <table>
+                <thead><tr><th>Factor</th><th>Impact</th><th>Condition</th></tr></thead>
+                <tbody>
+                    <tr><td>Baseline</td><td><span class="badge badge-green">85</span></td><td>Starting score</td></tr>
+                    <tr><td>Excessive cooling</td><td><span class="badge badge-red">-10</span></td><td>Cooler runtime &gt; 8 hours today</td></tr>
+                    <tr><td>Aux heater overuse</td><td><span class="badge badge-red">-8</span></td><td>Aux runtime &gt; 0.5 hours today</td></tr>
+                    <tr><td>Dirty filter</td><td><span class="badge badge-orange">-5</span></td><td>Total runtime &gt; 300 hours</td></tr>
+                    <tr><td>DR participation</td><td><span class="badge badge-green">+5</span></td><td>DR status is ACTIVE or PRE_COOLING</td></tr>
+                    <tr><td>AI optimization</td><td><span class="badge badge-green">+3</span></td><td>Manual override is OFF (AI controlling)</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h3 class="mt-4 mb-2">Cost Calculation Details</h3>
+        <p class="text-muted mb-2">
+            Energy costs are calculated using typical US residential electricity rates and
+            standard HVAC power draws:
+        </p>
+
+        <div class="table-wrapper">
+            <table>
+                <thead><tr><th>Component</th><th>Power Draw</th><th>Rate</th><th>Cost/Hour</th><th>Example (5h)</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td>❄️ AC Compressor</td>
+                        <td>3.5 kW</td>
+                        <td>$0.16/kWh</td>
+                        <td><strong>$0.56/hr</strong></td>
+                        <td>$2.80</td>
+                    </tr>
+                    <tr>
+                        <td>🔥 Primary Heater</td>
+                        <td>10.0 kW</td>
+                        <td>$0.16/kWh</td>
+                        <td><strong>$1.60/hr</strong></td>
+                        <td>$8.00</td>
+                    </tr>
+                    <tr>
+                        <td>⚡ Aux Heater</td>
+                        <td>15.0 kW</td>
+                        <td>$0.16/kWh</td>
+                        <td><strong>$2.40/hr</strong></td>
+                        <td>$12.00</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="info-box warning">
+            <div class="info-box-title">⚡ Why Aux Heating is So Expensive</div>
+            <p>
+                Auxiliary heating uses resistance coils — essentially a giant toaster inside your HVAC.
+                At 15 kW, it draws 4.3x more power than the AC compressor. Even 30 minutes of aux
+                heating costs $1.20 — the same as running the AC for over 2 hours. This is why the
+                anomaly engine flags aux heater overuse as a WARNING.
+            </p>
+        </div>
+
+        <h3 class="mt-4 mb-2">Savings Model</h3>
+        <div class="card-grid">
+            <div class="card">
+                <div class="card-icon">🤖</div>
+                <h3>AI Optimization: 15%</h3>
+                <p>Smart setpoint adjustments based on weather, time of day, and user preferences reduce unnecessary runtime by ~15%.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">🔧</div>
+                <h3>Filter Maintenance: 10%</h3>
+                <p>A clean filter improves airflow efficiency, reducing the load on the compressor and eliminating unnecessary aux heater activation.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">⚡</div>
+                <h3>DR Participation: ~$12/mo</h3>
+                <p>Reducing load during 3.5 DR events/week × 2 hours × $0.40/hour savings = approximately $12/month in avoided peak pricing.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ================================================================
+     SECTION 13: DESIGN DECISIONS
+     ================================================================ -->
+<section id="design-decisions">
+    <div class="container">
+        <div class="section-header">
+            <div class="section-number">13</div>
+            <h2>Design Decisions</h2>
+            <p>Why things are built the way they are</p>
+        </div>
+
+        <div class="pillar-card health">
+            <h3>Why In-Memory H2 Instead of a Real Database?</h3>
+            <p>
+                This is a demo application. H2 in-memory mode means zero setup — no Docker, no
+                database server, no connection strings. The data resets on restart, which is fine
+                for a simulator. In production, you'd swap to DynamoDB or PostgreSQL by changing
+                the datasource URL in application.yml.
+            </p>
+        </div>
+
+        <div class="pillar-card billing">
+            <h3>Why Vanilla JS Instead of React/Vue?</h3>
+            <p>
+                The frontend is ~250 lines of JavaScript. Adding React would require a build step
+                (webpack/vite), node_modules, and JSX compilation — all for a dashboard that polls
+                4 endpoints and updates DOM elements. Vanilla JS keeps the project self-contained:
+                <span class="inline-code">./gradlew bootRun</span> and you're done.
+            </p>
+        </div>
+
+        <div class="pillar-card dr">
+            <h3>Why Polling Instead of WebSockets?</h3>
+            <p>
+                WebSockets would be more efficient for real-time updates, but polling at 1.5-second
+                intervals is simpler to implement and debug. The overhead is minimal — each poll is
+                a small JSON response. For a demo with one user, polling is the right trade-off.
+            </p>
+        </div>
+
+        <div class="pillar-card health">
+            <h3>Why ProfileCredentialsProvider for Bedrock?</h3>
+            <p>
+                For a local demo, reading from <span class="inline-code">~/.aws/credentials</span>
+                is the simplest auth method. In production on EC2/ECS/Lambda, you'd use
+                <span class="inline-code">DefaultCredentialsProvider</span> which automatically
+                picks up IAM role credentials.
+            </p>
+        </div>
+
+        <div class="pillar-card billing">
+            <h3>Why 5 Simulated Minutes Per 2-Second Tick?</h3>
+            <p>
+                At 1:1 time, you'd wait hours to see a DR event or filter degradation. The 150x
+                speedup (5 min / 2 sec) means a full simulated day passes in ~9.6 real minutes.
+                You see DR events, mode transitions, and anomalies within the first few minutes
+                of running the app.
+            </p>
+        </div>
+
+        <div class="pillar-card dr">
+            <h3>Why Bangalore Weather?</h3>
+            <p>
+                Bangalore has interesting weather for HVAC simulation — warm enough to need cooling
+                most of the year, but with enough variation (monsoon season, cool mornings) to
+                trigger different HVAC modes. The Open-Meteo API provides free, no-key-required
+                weather data for any location.
+            </p>
+        </div>
+    </div>
+</section>
+
+
+<!-- ================================================================
+     SECTION 14: SNYDER THERMOSTAT CONTEXT
+     ================================================================ -->
+<section id="snyder">
+    <div class="container">
+        <div class="section-header">
+            <div class="section-number">14</div>
+            <h2>Amazon Smart Thermostat (Snyder)</h2>
+            <p>The real device this project simulates</p>
+        </div>
+
+        <p class="text-muted mb-3">
+            Snyder is Amazon's smart thermostat — a WiFi-connected device that controls home
+            HVAC systems. It reports telemetry events (temperature readings, compressor cycles,
+            mode changes) to the cloud, where services can analyze patterns and provide
+            intelligent recommendations.
+        </p>
+
+        <h3 class="mb-2">Simulated Event Types</h3>
+        <p class="text-muted mb-2">
+            The EventGenerator produces the same event types that a real Snyder thermostat
+            would report:
+        </p>
+
+        <div class="table-wrapper">
+            <table>
+                <thead><tr><th>Event</th><th>Real Snyder</th><th>Simulator</th><th>Frequency</th></tr></thead>
+                <tbody>
+                    <tr><td>Temperature reading</td><td>Every 5 min</td><td>Every tick</td><td>High</td></tr>
+                    <tr><td>Mode change</td><td>User/schedule triggered</td><td>Time-based + AI</td><td>Low</td></tr>
+                    <tr><td>Compressor on/off</td><td>Thermostat control loop</td><td>Physics-based</td><td>Medium</td></tr>
+                    <tr><td>Aux heater on/off</td><td>Emergency heat fallback</td><td>Temp-based trigger</td><td>Low</td></tr>
+                    <tr><td>Setpoint change</td><td>User/schedule/DR</td><td>AI + DR lifecycle</td><td>Low</td></tr>
+                    <tr><td>DR status</td><td>Grid operator signal</td><td>Simulated schedule</td><td>3-4/week</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h3 class="mt-4 mb-2">What a Real Integration Would Look Like</h3>
+        <div class="card-grid">
+            <div class="card">
+                <div class="card-icon">📡</div>
+                <h3>Event Ingestion</h3>
+                <p>Replace EventGenerator with a Kinesis/SQS consumer that reads real Snyder telemetry events from the device cloud.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">💾</div>
+                <h3>Persistent Storage</h3>
+                <p>Replace H2 with DynamoDB or Timestream for time-series event storage with TTL-based retention.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">🔔</div>
+                <h3>Push Notifications</h3>
+                <p>Replace polling with SNS/WebSocket push for real-time alerts to the Alexa app or email.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ================================================================
+     SECTION 15: FUTURE ENHANCEMENTS
+     ================================================================ -->
+<section id="future">
+    <div class="container">
+        <div class="section-header">
+            <div class="section-number">15</div>
+            <h2>Future Enhancements</h2>
+            <p>Where this project could go next</p>
+        </div>
+
+        <div class="card-grid">
+            <div class="card">
+                <div class="card-icon">🏠</div>
+                <h3>Multi-Device Support</h3>
+                <p>Support multiple thermostats in different zones. Compare efficiency across rooms. Coordinate heating/cooling for whole-home optimization.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">📈</div>
+                <h3>Historical Analytics</h3>
+                <p>Store events persistently and build weekly/monthly trend charts. Show year-over-year comparisons and seasonal patterns.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">🔌</div>
+                <h3>Utility Rate Integration</h3>
+                <p>Fetch real time-of-use electricity rates from utility APIs. Optimize setpoints based on actual pricing tiers.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">🌍</div>
+                <h3>Carbon Intensity</h3>
+                <p>Integrate with grid carbon intensity APIs. Shift HVAC load to times when the grid is powered by renewables.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">🗣️</div>
+                <h3>Alexa Integration</h3>
+                <p>Build an Alexa skill that connects to the advisor. "Alexa, why is my energy bill high?" triggers the same AI pipeline.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">🧪</div>
+                <h3>A/B Testing</h3>
+                <p>Compare different optimization strategies (aggressive savings vs comfort-first) and measure real energy impact.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">📱</div>
+                <h3>Mobile App</h3>
+                <p>React Native or Flutter app with push notifications for anomaly alerts and DR events.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">🔒</div>
+                <h3>Authentication</h3>
+                <p>Add Cognito or OAuth2 authentication. Multi-tenant support with per-user device bindings.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ================================================================
+     SECTION 16: GLOSSARY
+     ================================================================ -->
+<section id="glossary">
+    <div class="container">
+        <div class="section-header">
+            <div class="section-number">16</div>
+            <h2>Glossary</h2>
+            <p>Key terms used throughout this documentation</p>
+        </div>
+
+        <div class="table-wrapper">
+            <table>
+                <thead><tr><th>Term</th><th>Definition</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>HVAC</strong></td><td>Heating, Ventilation, and Air Conditioning — the system that controls indoor climate.</td></tr>
+                    <tr><td><strong>Setpoint</strong></td><td>The target temperature the thermostat tries to maintain.</td></tr>
+                    <tr><td><strong>Auxiliary Heater</strong></td><td>A backup resistance heater that activates when the primary heater can't keep up. Very expensive to run.</td></tr>
+                    <tr><td><strong>Demand Response (DR)</strong></td><td>A program where utilities ask customers to reduce electricity usage during peak demand periods.</td></tr>
+                    <tr><td><strong>Pre-cooling</strong></td><td>Lowering the temperature before a DR event to build a thermal buffer.</td></tr>
+                    <tr><td><strong>PRISM</strong></td><td>Proactive Resource and Intelligent Scheduling Manager — Amazon's clean energy optimization framework.</td></tr>
+                    <tr><td><strong>Energy Star</strong></td><td>A US government program that rates energy efficiency. V2 is the latest thermostat standard.</td></tr>
+                    <tr><td><strong>Snyder</strong></td><td>Amazon's smart thermostat product codename.</td></tr>
+                    <tr><td><strong>Bedrock</strong></td><td>Amazon's managed AI service that provides access to foundation models like Claude.</td></tr>
+                    <tr><td><strong>Claude</strong></td><td>Anthropic's AI model, accessed through Amazon Bedrock for conversational responses.</td></tr>
+                    <tr><td><strong>Open-Meteo</strong></td><td>A free weather API that provides current conditions and forecasts without requiring an API key.</td></tr>
+                    <tr><td><strong>H2</strong></td><td>A lightweight Java SQL database that can run in-memory. Zero configuration required.</td></tr>
+                    <tr><td><strong>Thermal Drift</strong></td><td>The natural tendency of indoor temperature to move toward outdoor temperature over time.</td></tr>
+                    <tr><td><strong>Rebound Effect</strong></td><td>A demand spike that occurs when many homes simultaneously restore their setpoints after a DR event.</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<!-- ================================================================
+     SECTION 17: COMPLETE CSS REFERENCE
+     ================================================================ -->
+<section id="css-reference">
+    <div class="container">
+        <div class="section-header">
+            <div class="section-number">17</div>
+            <h2>Complete CSS Reference</h2>
+            <p>Every CSS custom property, selector, and animation in the dashboard</p>
+        </div>
+
+        <h3 class="mb-2">17.1 CSS Custom Properties</h3>
+        <div class="table-wrapper">
+            <table>
+                <thead><tr><th>Variable</th><th>Value</th><th>Usage</th></tr></thead>
+                <tbody>
+                    <tr><td><span class="inline-code">--bg</span></td><td>#f0f7ff</td><td>Page background</td></tr>
+                    <tr><td><span class="inline-code">--surface</span></td><td>#ffffff</td><td>Card backgrounds</td></tr>
+                    <tr><td><span class="inline-code">--surface2</span></td><td>#f5faff</td><td>Secondary surfaces</td></tr>
+                    <tr><td><span class="inline-code">--border</span></td><td>#dce8f0</td><td>All borders</td></tr>
+                    <tr><td><span class="inline-code">--text</span></td><td>#1a3044</td><td>Primary text</td></tr>
+                    <tr><td><span class="inline-code">--muted</span></td><td>#6b8a9e</td><td>Secondary text</td></tr>
+                    <tr><td><span class="inline-code">--accent</span></td><td>#3b8fd4</td><td>Primary accent</td></tr>
+                    <tr><td><span class="inline-code">--green</span></td><td>#4db89c</td><td>Success/running</td></tr>
+                    <tr><td><span class="inline-code">--orange</span></td><td>#e6a84d</td><td>Warnings</td></tr>
+                    <tr><td><span class="inline-code">--red</span></td><td>#e07070</td><td>Heat/critical</td></tr>
+                    <tr><td><span class="inline-code">--radius</span></td><td>14px</td><td>Border radius</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h3 class="mt-4 mb-2">17.2 Gradient Definitions</h3>
+        <div class="table-wrapper">
+            <table>
+                <thead><tr><th>Gradient</th><th>Colors</th><th>Used For</th></tr></thead>
+                <tbody>
+                    <tr><td><span class="inline-code">--gradient</span></td><td>#3b8fd4 → #7ec4f0</td><td>Primary buttons, user bubbles</td></tr>
+                    <tr><td><span class="inline-code">--gradient-warm</span></td><td>#e6a84d → #e07070</td><td>Heat mode, override button</td></tr>
+                    <tr><td><span class="inline-code">--gradient-cool</span></td><td>#3b8fd4 → #4db8c9</td><td>Cool mode, cooler bar</td></tr>
+                    <tr><td><span class="inline-code">--gradient-green</span></td><td>#4db89c → #4db8a8</td><td>Start button, chatbot link</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h3 class="mt-4 mb-2">17.3 Animations</h3>
+        <div class="code-block">
+            <div class="code-header"><span class="code-filename">style.css — Animations</span><span class="code-lang">CSS</span></div>
+            <div class="code-body"><pre><span class="sel">@keyframes</span> <span class="fn">pulse</span> {
+    <span class="num">0%</span>, <span class="num">100%</span> { <span class="prop">opacity</span>: <span class="num">1</span>; }
+    <span class="num">50%</span> { <span class="prop">opacity</span>: <span class="num">.5</span>; }
+}
+<span class="sel">@keyframes</span> <span class="fn">fadeIn</span> {
+    <span class="kw">from</span> { <span class="prop">opacity</span>: <span class="num">0</span>; <span class="prop">transform</span>: <span class="fn">translateY</span>(<span class="num">6px</span>); }
+    <span class="kw">to</span> { <span class="prop">opacity</span>: <span class="num">1</span>; <span class="prop">transform</span>: <span class="fn">translateY</span>(<span class="num">0</span>); }
+}
+<span class="sel">@keyframes</span> <span class="fn">bounce</span> {
+    <span class="num">0%</span>, <span class="num">100%</span> { <span class="prop">transform</span>: <span class="fn">translateY</span>(<span class="num">0</span>); }
+    <span class="num">50%</span> { <span class="prop">transform</span>: <span class="fn">translateY</span>(<span class="num">-3px</span>); }
+}
+
+<span class="cmt">/* Applied to: */</span>
+<span class="sel">.dot.running</span> { <span class="prop">animation</span>: pulse <span class="num">1.5s</span> infinite; }
+<span class="sel">.conn-dot.online</span> { <span class="prop">animation</span>: pulse <span class="num">2s</span> infinite; }
+<span class="sel">.msg</span> { <span class="prop">animation</span>: fadeIn <span class="num">.3s</span>; }
+<span class="sel">.typing-dots span</span> { <span class="prop">animation</span>: bounce <span class="num">.6s</span> infinite; }</pre></div>
+        </div>
+
+        <h3 class="mt-4 mb-2">17.4 Temperature Ring SVG</h3>
+        <div class="code-block">
+            <div class="code-header"><span class="code-filename">Temperature Ring</span><span class="code-lang">HTML + CSS + JS</span></div>
+            <div class="code-body"><pre><span class="cmt">&lt;!-- SVG ring: circumference = 2π × 52 ≈ 327 --&gt;</span>
+<span class="tag">&lt;svg</span> <span class="attr">viewBox</span>=<span class="val">"0 0 120 120"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;circle</span> <span class="attr">cx</span>=<span class="val">"60"</span> <span class="attr">cy</span>=<span class="val">"60"</span> <span class="attr">r</span>=<span class="val">"52"</span> <span class="attr">class</span>=<span class="val">"ring-bg"</span><span class="tag">/&gt;</span>
+    <span class="tag">&lt;circle</span> <span class="attr">cx</span>=<span class="val">"60"</span> <span class="attr">cy</span>=<span class="val">"60"</span> <span class="attr">r</span>=<span class="val">"52"</span> <span class="attr">class</span>=<span class="val">"ring-fill"</span><span class="tag">/&gt;</span>
+<span class="tag">&lt;/svg&gt;</span>
+
+<span class="sel">.ring-fill</span> {
+    <span class="prop">stroke-dasharray</span>: <span class="num">327</span>;
+    <span class="prop">stroke-dashoffset</span>: <span class="num">100</span>;
+    <span class="prop">transition</span>: stroke-dashoffset <span class="num">1s</span>;
+}
+
+<span class="cmt">// JS: map 60-100°F → 0-100% fill</span>
+<span class="kw">const</span> pct = (indoorTemp - <span class="num">60</span>) / <span class="num">40</span>;
+ring.style.strokeDashoffset = <span class="num">327</span> - (<span class="num">327</span> * pct);</pre></div>
+        </div>
+
+        <h3 class="mt-4 mb-2">17.5 Collapsible Sections</h3>
+        <div class="code-block">
+            <div class="code-header"><span class="code-filename">Collapsible pattern</span><span class="code-lang">CSS + JS</span></div>
+            <div class="code-body"><pre><span class="sel">.collapse-body</span> {
+    <span class="prop">max-height</span>: <span class="num">0</span>;
+    <span class="prop">overflow</span>: hidden;
+    <span class="prop">transition</span>: max-height <span class="num">.3s</span> ease;
+}
+<span class="sel">.collapse-body.open</span> {
+    <span class="prop">max-height</span>: <span class="num">500px</span>;
+    <span class="prop">overflow</span>: visible;
+}
+<span class="sel">.arrow.open</span> {
+    <span class="prop">transform</span>: <span class="fn">rotate</span>(<span class="num">90deg</span>);
+}
+
+<span class="kw">function</span> <span class="fn">toggle</span>(id) {
+    document.<span class="fn">getElementById</span>(<span class="str">'body-'</span> + id)
+        .classList.<span class="fn">toggle</span>(<span class="str">'open'</span>);
+    document.<span class="fn">getElementById</span>(<span class="str">'arrow-'</span> + id)
+        .classList.<span class="fn">toggle</span>(<span class="str">'open'</span>);
+}</pre></div>
+        </div>
+
+        <h3 class="mt-4 mb-2">17.6 DR Status Card Colors</h3>
+        <div class="table-wrapper">
+            <table>
+                <thead><tr><th>State</th><th>Class</th><th>Background</th></tr></thead>
+                <tbody>
+                    <tr><td>NONE</td><td><span class="inline-code">.dr</span></td><td>Blue gradient</td></tr>
+                    <tr><td>SCHEDULED</td><td><span class="inline-code">.dr.scheduled</span></td><td>Yellow gradient</td></tr>
+                    <tr><td>PRE_COOLING</td><td><span class="inline-code">.dr.pre_cooling</span></td><td>Light blue gradient</td></tr>
+                    <tr><td>ACTIVE</td><td><span class="inline-code">.dr.active</span></td><td>Green gradient</td></tr>
+                    <tr><td>RECOVERY</td><td><span class="inline-code">.dr.recovery</span></td><td>Orange gradient</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h3 class="mt-4 mb-2">17.7 Chat Message Styles</h3>
+        <div class="code-block">
+            <div class="code-header"><span class="code-filename">Message bubbles</span><span class="code-lang">CSS</span></div>
+            <div class="code-body"><pre><span class="sel">.msg.user</span> { <span class="prop">align-self</span>: flex-end; }
+<span class="sel">.msg.user .msg-bubble</span> {
+    <span class="prop">background</span>: <span class="val">var(--gradient)</span>;
+    <span class="prop">color</span>: <span class="val">#fff</span>;
+}
+<span class="sel">.msg.advisor .msg-bubble</span> {
+    <span class="prop">background</span>: <span class="val">var(--surface)</span>;
+    <span class="prop">border</span>: <span class="num">1px</span> solid <span class="val">var(--border)</span>;
+}
+<span class="sel">.msg.alert .msg-bubble</span> {
+    <span class="prop">background</span>: linear-gradient(<span class="num">135deg</span>, <span class="val">#fffbf0</span>, <span class="val">#fff3e0</span>);
+    <span class="prop">border</span>: <span class="num">1px</span> solid <span class="val">#ffe0b2</span>;
+}</pre></div>
+        </div>
+
+        <h3 class="mt-4 mb-2">17.8 Runtime Bar Fills</h3>
+        <div class="code-block">
+            <div class="code-header"><span class="code-filename">Runtime bars</span><span class="code-lang">CSS</span></div>
+            <div class="code-body"><pre><span class="sel">.rt-fill.heat</span> { <span class="prop">background</span>: <span class="val">var(--gradient-warm)</span>; }
+<span class="sel">.rt-fill.aux</span>  { <span class="prop">background</span>: linear-gradient(<span class="num">90deg</span>, <span class="val">var(--orange)</span>, <span class="val">var(--red)</span>); }
+<span class="sel">.rt-fill.cool</span> { <span class="prop">background</span>: <span class="val">var(--gradient-cool)</span>; }
+<span class="sel">.rt-fill</span> {
+    <span class="prop">height</span>: <span class="num">100%</span>;
+    <span class="prop">transition</span>: width <span class="num">.8s</span>;
+    <span class="prop">width</span>: <span class="num">0</span>;
+}</pre></div>
+        </div>
+    </div>
+</section>
+
+<!-- ================================================================
+     FOOTER
+     ================================================================ -->
+<div class="footer">
+    <h3>⚡ Smart Home Energy Advisor</h3>
+    <p>Built with Java 17, Spring Boot 3.2, Amazon Bedrock (Claude), and Open-Meteo</p>
+    <p class="mt-2" style="font-size:.75rem; color:#64748b;">
+        Amazon Smart Thermostat (Snyder) · AI-Powered Energy Intelligence · 3 Pillars
+    </p>
+    <p class="mt-1" style="font-size:.7rem; color:#475569;">
+        code.amazon.com/packages/SmartHomeEnergyAdvisor
+    </p>
+</div>
+
+</body>
+</html>

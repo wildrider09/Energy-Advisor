@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Home Energy Advisor</title>
+    <link rel="stylesheet" href="style.css?v=34">
+</head>
+<body>
+<div class="layout">
+    <aside class="sidebar">
+        <div class="device-card">
+            <div class="temp-ring">
+                <svg viewBox="0 0 120 120" class="ring-svg"><circle cx="60" cy="60" r="52" class="ring-bg"/><circle cx="60" cy="60" r="52" class="ring-fill" id="temp-ring"/></svg>
+                <div class="temp-inner"><span id="indoor-temp" class="temp-val">72.0</span><span class="temp-unit">°F</span></div>
+            </div>
+            <div class="mode-badge" id="mode-badge">COOL</div>
+            <div class="target">Target <span id="target-setpoint">74.0</span>°F</div>
+        </div>
+
+        <div class="stat-grid">
+            <div class="stat-card outdoor"><div class="stat-icon">☀️</div><div class="stat-val" id="outdoor-temp">85°F</div><div class="stat-label">Bangalore</div><div class="stat-trend" id="weather-trend"></div></div>
+            <div class="stat-card dr"><div class="stat-icon">⚡</div><div class="stat-val" id="dr-status">NONE</div><div class="stat-label">DR Status</div><div class="stat-trend" id="next-dr" style="font-size:.48rem"></div></div>
+            <div class="stat-card filter"><div class="stat-icon">🔧</div><div class="stat-val" id="filter-hours">402h</div><div class="stat-label">Filter</div></div>
+        </div>
+
+        <h3>HVAC Components</h3>
+        <div class="component-list">
+            <div class="component" id="comp-heater"><span class="dot" id="dot-heater"></span><span class="comp-name">Primary Heater</span><span id="status-heater" class="status">IDLE</span></div>
+            <div class="component" id="comp-aux"><span class="dot" id="dot-aux"></span><span class="comp-name">Aux Heater</span><span id="status-aux" class="status">IDLE</span></div>
+            <div class="component" id="comp-cooler"><span class="dot" id="dot-cooler"></span><span class="comp-name">Cooler</span><span id="status-cooler" class="status">IDLE</span></div>
+            <div class="component" id="comp-fan"><span class="dot" id="dot-fan"></span><span class="comp-name">Fan</span><span id="status-fan" class="status">IDLE</span></div>
+        </div>
+
+        <h3>Today's Runtime</h3>
+        <div class="runtime-bars">
+            <div class="rt-row"><span>Heater</span><div class="rt-bar"><div class="rt-fill heat" id="bar-heater"></div></div><span class="rt-val" id="rt-heater">0.0h</span></div>
+            <div class="rt-row"><span>Aux</span><div class="rt-bar"><div class="rt-fill aux" id="bar-aux"></div></div><span class="rt-val" id="rt-aux">0.0h</span></div>
+            <div class="rt-row"><span>Cooler</span><div class="rt-bar"><div class="rt-fill cool" id="bar-cooler"></div></div><span class="rt-val" id="rt-cooler">0.0h</span></div>
+            <div class="rt-row"><span>Aux Cycles</span><div class="rt-bar"><div class="rt-fill cycles" id="bar-cycles"></div></div><span class="rt-val" id="aux-cycles">0</span></div>
+        </div>
+
+        <!-- Collapsible: Override -->
+        <!-- Collapsible: Override -->
+        <div class="collapse-hdr" onclick="toggle('cost')"><span>💰 Today's Cost</span><span class="arrow" id="arrow-cost">▶</span></div>
+        <div class="collapse-body" id="body-cost">
+            <div class="cost-panel">
+                <div class="cost-total" id="cost-total">$0.00</div>
+                <div class="cost-label">estimated today</div>
+                <div class="cost-row"><span>❄️ AC</span><span id="cost-cool">$0.00</span></div>
+                <div class="cost-row"><span>🔥 Heater</span><span id="cost-heat">$0.00</span></div>
+                <div class="cost-row"><span>⚡ Aux</span><span id="cost-aux">$0.00</span></div>
+                <div class="cost-row projected"><span>📅 Monthly est.</span><span id="cost-month">$0</span></div>
+            </div>
+        </div>
+
+        <div class="collapse-hdr" onclick="toggle('ov')"><span>🎛️ Manual Override</span><span class="arrow" id="arrow-ov">▶</span></div>
+        <div class="collapse-body" id="body-ov">
+            <div class="override-panel">
+                <div class="override-temp">
+                    <button onclick="adjustTemp(-1)" class="temp-btn minus">−</button>
+                    <div class="override-display" id="override-display">74°F</div>
+                    <button onclick="adjustTemp(1)" class="temp-btn plus">+</button>
+                </div>
+                <div class="mode-buttons">
+                    <button onclick="setMode('COOL')" class="mode-btn cool active" id="mode-cool">❄️ Cool</button>
+                    <button onclick="setMode('HEAT')" class="mode-btn heat" id="mode-heat">🔥 Heat</button>
+                    <button onclick="setMode('OFF')" class="mode-btn off" id="mode-off">⏸ Off</button>
+                </div>
+                <button onclick="manualOverride()" class="btn-apply">🔒 Apply Override</button>
+                <button onclick="resumeAI()" class="btn-resume-full">🤖 Resume AI</button>
+                <div class="override-status" id="override-status">🤖 AI controlling thermostat</div>
+            </div>
+        </div>
+
+        <!-- Collapsible: Notifications -->
+        <div class="collapse-hdr" onclick="toggle('notif')"><span>🔔 Notifications</span><span class="arrow" id="arrow-notif">▶</span></div>
+        <div class="collapse-body scrollable" id="body-notif">
+            <div class="notif-card"><div class="notif-title">🔧 Filter Reminder</div><div class="notif-body">Air filter has 492h of use. Replacing could save $10-15/month.</div></div>
+            <div class="notif-card"><div class="notif-title">⚡ DR Event Monday</div><div class="notif-body">Demand response at 2 PM. Pre-cooling starts at 1:15 PM.</div></div>
+            <div class="notif-card"><div class="notif-title">🤖 AI Adjustment</div><div class="notif-body">Raised temp 3°F during peak pricing. Saving ~$0.40/hour.</div></div>
+        </div>
+
+        <!-- Collapsible: Routines (mock) -->
+        <div class="collapse-hdr" onclick="toggle('rout')"><span>⏰ Routines</span><span class="arrow" id="arrow-rout">▶</span></div>
+        <div class="collapse-body scrollable" id="body-rout">
+            <div class="routine-item"><span class="routine-icon">🌅</span><span class="routine-name">Morning Cool</span><span class="routine-time">6 AM → 72°F</span></div>
+            <div class="routine-item"><span class="routine-icon">☀️</span><span class="routine-name">Peak Savings</span><span class="routine-time">2-6 PM → +3°F</span></div>
+            <div class="routine-item"><span class="routine-icon">🌙</span><span class="routine-name">Night Mode</span><span class="routine-time">10 PM → 76°F</span></div>
+            <div class="routine-item"><span class="routine-icon">🤖</span><span class="routine-name">AI Optimize</span><span class="routine-time">Every 60s</span></div>
+        </div>
+
+        <div class="sim-controls">
+            <button onclick="startSim()" class="btn-start">▶ Start</button>
+            <button onclick="stopSim()" class="btn-stop">⏸ Stop</button>
+            <button onclick="resetSim()" class="btn-reset">↺ Reset</button>
+        </div>
+    </aside>
+
+    <main class="chat-area">
+        <div class="chat-header">
+            <div class="header-left">
+                <h1>⚡ Energy Advisor</h1>
+                <span class="powered-by">Snyder Thermostat</span>
+                <span id="connectivity" class="conn-dot online" title="Online"></span>
+            </div>
+            <div class="header-buttons">
+                <button onclick="runOptimize()" class="optimize-btn-header">🤖 AI Optimize</button>
+                <a href="/chatbot.html" class="chatbot-link">💬 Chatbot</a>
+            </div>
+        </div>
+        <div id="chat-messages" class="chat-messages">
+            <div class="msg advisor"><div class="avatar">🤖</div><div class="msg-bubble"><div class="msg-content">Hi! I'm your Smart Home Energy Advisor for the Snyder thermostat. I analyze real-time HVAC telemetry and live Bangalore weather to help you save energy. Ask me anything!</div></div></div>
+        </div>
+        <div class="chat-input-area">
+            <div class="suggestions">
+                <button onclick="askQuestion('Why is my energy bill high?')">💰 Bill analysis</button>
+                <button onclick="askQuestion('Is my HVAC system healthy?')">🔍 Health check</button>
+                <button onclick="askQuestion('Am I ready for the demand response event?')">🌿 DR readiness</button>
+                <button onclick="askQuestion('Compare my usage today vs yesterday')">📊 Compare</button>
+                <button onclick="askQuestion('Do I need to change my air filter?')">🔧 Filter</button>
+                <button onclick="askQuestion('How can I reduce my carbon footprint?')">🌍 Go green</button>
+                <button onclick="askQuestion('What is happening with my thermostat right now?')">🌡️ Status</button>
+                <button onclick="askQuestion('Why does my aux heater keep running?')">🔥 Aux issue</button>
+                <button onclick="askQuestion('What temperature should I set for best savings?')">💡 Best temp</button>
+                <button onclick="askQuestion('How is the weather affecting my energy usage?')">☀️ Weather</button>
+                <button onclick="askQuestion('Is my system running efficiently?')">⚙️ Efficiency</button>
+                <button onclick="askQuestion('When is the next demand response event?')">📅 Next DR</button>
+            </div>
+            <div class="chat-input">
+                <input type="text" id="user-input" placeholder="Ask about energy, HVAC health, or demand response..." onkeydown="if(event.key==='Enter')sendMessage()">
+                <button onclick="sendMessage()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2L15 22L11 13L2 9L22 2Z"/></svg></button>
+            </div>
+        </div>
+    </main>
+</div>
+<script src="app.js?v=34"></script>
+</body>
+</html>
